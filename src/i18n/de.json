@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "Mellow",
+    "tagline": "Ruhige Zeiterfassung für fokussierte Arbeit"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "tasks": "Aufgaben",
+    "completed": "Erledigt",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  },
+  "auth": {
+    "welcome": "Willkommen bei Mellow",
+    "subtitle": "Melde dich lokal an. Alle Daten bleiben auf deinem Gerät.",
+    "firstUser": "Ersten lokalen Benutzer erstellen",
+    "login": "Anmelden",
+    "register": "Benutzer erstellen",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "passwordHint": "Mindestens 8 Zeichen",
+    "error": "Anmeldung fehlgeschlagen"
+  },
+  "dashboard": {
+    "title": "Übersicht",
+    "subtitle": "Dein ruhiger Überblick über heute.",
+    "activeTask": "Aktive Aufgabe",
+    "todayTotal": "Heute erfasst",
+    "noActiveTask": "Kein Timer läuft gerade."
+  },
+  "tasks": {
+    "title": "Aufgaben",
+    "subtitle": "Plane, tracke und dokumentiere deine Arbeit.",
+    "newTask": "Neue Aufgabe",
+    "editTask": "Aufgabe bearbeiten",
+    "titleLabel": "Titel",
+    "description": "Beschreibung",
+    "status": "Status",
+    "save": "Speichern",
+    "create": "Erstellen",
+    "delete": "Löschen",
+    "complete": "Abschließen",
+    "start": "Start",
+    "stop": "Stop",
+    "details": "Details",
+    "empty": "Noch keine Aufgaben vorhanden.",
+    "timerRunning": "Ein Timer läuft bereits. Stoppe ihn zuerst.",
+    "completedReadonly": "Erledigte Aufgaben sind standardmäßig schreibgeschützt."
+  },
+  "status": {
+    "todo": "Todo",
+    "in_progress": "In Arbeit",
+    "done": "Erledigt",
+    "tracking": "Wird getrackt"
+  },
+  "timeEntries": {
+    "title": "Zeiteinträge",
+    "manual": "Manueller Eintrag",
+    "tracked": "Getrackt",
+    "duration": "Dauer in Minuten",
+    "date": "Datum",
+    "note": "Notiz",
+    "add": "Eintrag hinzufügen",
+    "empty": "Noch keine Zeiteinträge."
+  },
+  "markdown": {
+    "edit": "Schreiben",
+    "preview": "Vorschau",
+    "placeholder": "Markdown-Notizen..."
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Passe Mellow an deine Arbeitsweise an.",
+    "language": "Sprache",
+    "theme": "Theme",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "defaultView": "Standardansicht",
+    "userName": "Benutzername",
+    "save": "Einstellungen speichern"
+  },
+  "common": {
+    "cancel": "Abbrechen",
+    "loading": "Lädt...",
+    "error": "Etwas ist schiefgelaufen.",
+    "minutes": "Minuten"
+  }
+}

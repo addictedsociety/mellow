@@ -1,0 +1,45 @@
+{
+  "name": "mellow",
+  "version": "0.1.0",
+  "description": "A lightweight local desktop time tracker for managing tasks, tracking work sessions, adding manual time entries, and writing notes with Markdown support. The app stores all data locally, supports multiple languages, and provides a clean overview of active and completed tasks.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/addictedsociety/mellow.git"
+  },
+  "keywords": [],
+  "author": "Jonas Glatz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/addictedsociety/mellow/issues"
+  },
+  "homepage": "https://github.com/addictedsociety/mellow#readme",
+  "dependencies": {
+    "@tauri-apps/api": "^2.10.1",
+    "dompurify": "^3.4.1",
+    "lucide-vue-next": "^1.0.0",
+    "markdown-it": "^14.1.1",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.33",
+    "vue-i18n": "^11.4.0",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.4",
+    "@tauri-apps/cli": "^2.10.1",
+    "@types/markdown-it": "^14.1.2",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.10",
+    "vue-tsc": "^3.2.7"
+  }
+}

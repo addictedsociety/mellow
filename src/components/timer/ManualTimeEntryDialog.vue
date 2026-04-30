@@ -1,0 +1,114 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue'
+import type { Task } from '@/types/task.type'
+import type { ManualTimeEntryPayload } from '@/types/time-entry.type'
+
+const { tasks } = defineProps<{
+  tasks: Task[]
+}>()
+
+const emit = defineEmits<{
+  save: [payload: ManualTimeEntryPayload]
+}>()
+
+const { t } = useI18n()
+
+const isOpen = ref(false)
+const taskId = ref<number | null>(null)
+const durationMinutes = ref(30)
+const date = ref('')
+const noteMarkdown = ref('')
+
+const activeTasks = computed(() => tasks.filter((task) => task.status !== 'done'))
+
+const resetForm = () => {
+  taskId.value = activeTasks.value[0]?.id ?? null
+  durationMinutes.value = 30
+  date.value = ''
+  noteMarkdown.value = ''
+}
+
+const open = () => {
+  resetForm()
+  isOpen.value = true
+}
+
+const submit = () => {
+  if (!taskId.value) {
+    return
+  }
+
+  emit('save', {
+    taskId: taskId.value,
+    durationMinutes: durationMinutes.value,
+    date: date.value ? new Date(date.value).toISOString() : undefined,
+    noteMarkdown: noteMarkdown.value
+  })
+  isOpen.value = false
+}
+</script>
+
+<template>
+  <button
+    class="rounded-2xl bg-stone-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-stone-700"
+    type="button"
+    @click="open"
+  >
+    {{ t('timeEntries.manual') }}
+  </button>
+
+  <div v-if="isOpen" class="fixed inset-0 z-50 grid place-items-center bg-stone-900/30 p-6">
+    <form class="w-full max-w-xl rounded-[2rem] bg-white p-6 shadow-xl" @submit.prevent="submit">
+      <h2 class="text-xl font-semibold">{{ t('timeEntries.manual') }}</h2>
+
+      <label class="mt-5 block text-sm font-medium text-stone-600">
+        {{ t('tasks.titleLabel') }}
+        <select v-model.number="taskId" class="mt-2 w-full rounded-2xl border border-stone-200 px-4 py-3">
+          <option v-for="task in activeTasks" :key="task.id" :value="task.id">
+            {{ task.title }}
+          </option>
+        </select>
+      </label>
+
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <label class="block text-sm font-medium text-stone-600">
+          {{ t('timeEntries.duration') }}
+          <input
+            v-model.number="durationMinutes"
+            class="mt-2 w-full rounded-2xl border border-stone-200 px-4 py-3"
+            min="1"
+            type="number"
+          />
+        </label>
+        <label class="block text-sm font-medium text-stone-600">
+          {{ t('timeEntries.date') }}
+          <input
+            v-model="date"
+            class="mt-2 w-full rounded-2xl border border-stone-200 px-4 py-3"
+            type="datetime-local"
+          />
+        </label>
+      </div>
+
+      <label class="mt-4 block text-sm font-medium text-stone-600">
+        {{ t('timeEntries.note') }}
+        <MarkdownEditor v-model="noteMarkdown" class="mt-2" />
+      </label>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button
+          class="rounded-2xl bg-stone-100 px-4 py-2 text-sm font-medium text-stone-600"
+          type="button"
+          @click="isOpen = false"
+        >
+          {{ t('common.cancel') }}
+        </button>
+        <button class="rounded-2xl bg-stone-900 px-4 py-2 text-sm font-medium text-white" type="submit">
+          {{ t('timeEntries.add') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</template>
