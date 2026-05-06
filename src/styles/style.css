@@ -1,4 +1,10 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
 
 /* =====================================================================
    Theme-System
@@ -11,7 +17,7 @@
 ===================================================================== */
 
 /* ----------------------------- DEFAULT (shadcn neutral) ----------------------------- */
-html[data-theme="default"][data-mode="light"] {
+html[data-theme='default'][data-mode='light'] {
   --background: #ffffff;
   --foreground: #0a0a0a;
   --card: #ffffff;
@@ -44,14 +50,13 @@ html[data-theme="default"][data-mode="light"] {
   --sidebar-accent-foreground: #18181b;
   --sidebar-border: #e4e4e7;
   --sidebar-ring: #a1a1aa;
-  --font-sans:
-    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-serif: ui-serif, Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 0.5rem;
 }
 
-html[data-theme="default"][data-mode="dark"] {
+html[data-theme='default'][data-mode='dark'] {
   --background: #0a0a0a;
   --foreground: #fafafa;
   --card: #0a0a0a;
@@ -84,15 +89,14 @@ html[data-theme="default"][data-mode="dark"] {
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: #27272a;
   --sidebar-ring: #d4d4d8;
-  --font-sans:
-    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-serif: ui-serif, Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 0.5rem;
 }
 
 /* ----------------------------- VIOLET BLOOM ----------------------------- */
-html[data-theme="violet-bloom"][data-mode="light"] {
+html[data-theme='violet-bloom'][data-mode='light'] {
   --background: #fdfdfd;
   --foreground: #000000;
   --card: #fdfdfd;
@@ -125,13 +129,13 @@ html[data-theme="violet-bloom"][data-mode="light"] {
   --sidebar-accent-foreground: #000000;
   --sidebar-border: #ebebeb;
   --sidebar-ring: #000000;
-  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
   --font-serif: Lora, serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-mono: 'IBM Plex Mono', monospace;
   --radius: 1.4rem;
 }
 
-html[data-theme="violet-bloom"][data-mode="dark"] {
+html[data-theme='violet-bloom'][data-mode='dark'] {
   --background: #1a1b1e;
   --foreground: #f0f0f0;
   --card: #222327;
@@ -164,14 +168,14 @@ html[data-theme="violet-bloom"][data-mode="dark"] {
   --sidebar-accent-foreground: #8c5cff;
   --sidebar-border: #33353a;
   --sidebar-ring: #8c5cff;
-  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
   --font-serif: Lora, serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-mono: 'IBM Plex Mono', monospace;
   --radius: 1.4rem;
 }
 
 /* ----------------------------- VERCEL ----------------------------- */
-html[data-theme="vercel"][data-mode="light"] {
+html[data-theme='vercel'][data-mode='light'] {
   --background: oklch(0.99 0 0);
   --foreground: oklch(0 0 0);
   --card: oklch(1 0 0);
@@ -206,11 +210,11 @@ html[data-theme="vercel"][data-mode="light"] {
   --sidebar-ring: oklch(0 0 0);
   --font-sans: Geist, sans-serif;
   --font-serif: Georgia, serif;
-  --font-mono: "Geist Mono", monospace;
+  --font-mono: 'Geist Mono', monospace;
   --radius: 0.5rem;
 }
 
-html[data-theme="vercel"][data-mode="dark"] {
+html[data-theme='vercel'][data-mode='dark'] {
   --background: oklch(0 0 0);
   --foreground: oklch(1 0 0);
   --card: oklch(0.14 0 0);
@@ -245,12 +249,12 @@ html[data-theme="vercel"][data-mode="dark"] {
   --sidebar-ring: oklch(0.72 0 0);
   --font-sans: Geist, sans-serif;
   --font-serif: Georgia, serif;
-  --font-mono: "Geist Mono", monospace;
+  --font-mono: 'Geist Mono', monospace;
   --radius: 0.5rem;
 }
 
 /* ----------------------------- TWITTER ----------------------------- */
-html[data-theme="twitter"][data-mode="light"] {
+html[data-theme='twitter'][data-mode='light'] {
   --background: #ffffff;
   --foreground: #0f1419;
   --card: #f7f8f8;
@@ -283,13 +287,13 @@ html[data-theme="twitter"][data-mode="light"] {
   --sidebar-accent-foreground: #1e9df1;
   --sidebar-border: #e1e8ed;
   --sidebar-ring: #1da1f2;
-  --font-sans: "Open Sans", sans-serif;
+  --font-sans: 'Open Sans', sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 1.3rem;
 }
 
-html[data-theme="twitter"][data-mode="dark"] {
+html[data-theme='twitter'][data-mode='dark'] {
   --background: #000000;
   --foreground: #e7e9ea;
   --card: #17181c;
@@ -322,14 +326,14 @@ html[data-theme="twitter"][data-mode="dark"] {
   --sidebar-accent-foreground: #1c9cf0;
   --sidebar-border: #38444d;
   --sidebar-ring: #1da1f2;
-  --font-sans: "Open Sans", sans-serif;
+  --font-sans: 'Open Sans', sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 1.3rem;
 }
 
 /* ----------------------------- TANGERINE ----------------------------- */
-html[data-theme="tangerine"][data-mode="light"] {
+html[data-theme='tangerine'][data-mode='light'] {
   --background: #e8ebed;
   --foreground: #333333;
   --card: #ffffff;
@@ -363,12 +367,12 @@ html[data-theme="tangerine"][data-mode="light"] {
   --sidebar-border: #e5e7eb;
   --sidebar-ring: #e05d38;
   --font-sans: Inter, sans-serif;
-  --font-serif: "Source Serif 4", serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-serif: 'Source Serif 4', serif;
+  --font-mono: 'JetBrains Mono', monospace;
   --radius: 0.75rem;
 }
 
-html[data-theme="tangerine"][data-mode="dark"] {
+html[data-theme='tangerine'][data-mode='dark'] {
   --background: #1c2433;
   --foreground: #e5e5e5;
   --card: #2a3040;
@@ -402,13 +406,13 @@ html[data-theme="tangerine"][data-mode="dark"] {
   --sidebar-border: #3d4354;
   --sidebar-ring: #e05d38;
   --font-sans: Inter, sans-serif;
-  --font-serif: "Source Serif 4", serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-serif: 'Source Serif 4', serif;
+  --font-mono: 'JetBrains Mono', monospace;
   --radius: 0.75rem;
 }
 
 /* ----------------------------- T3 CHAT ----------------------------- */
-html[data-theme="t3-chat"][data-mode="light"] {
+html[data-theme='t3-chat'][data-mode='light'] {
   --background: #faf5fa;
   --foreground: #501854;
   --card: #faf5fa;
@@ -444,7 +448,7 @@ html[data-theme="t3-chat"][data-mode="light"] {
   --radius: 0.5rem;
 }
 
-html[data-theme="t3-chat"][data-mode="dark"] {
+html[data-theme='t3-chat'][data-mode='dark'] {
   --background: #221d27;
   --foreground: #d2c4de;
   --card: #2c2632;
@@ -481,7 +485,7 @@ html[data-theme="t3-chat"][data-mode="dark"] {
 }
 
 /* ----------------------------- SUPABASE ----------------------------- */
-html[data-theme="supabase"][data-mode="light"] {
+html[data-theme='supabase'][data-mode='light'] {
   --background: #fcfcfc;
   --foreground: #171717;
   --card: #fcfcfc;
@@ -520,7 +524,7 @@ html[data-theme="supabase"][data-mode="light"] {
   --radius: 0.5rem;
 }
 
-html[data-theme="supabase"][data-mode="dark"] {
+html[data-theme='supabase'][data-mode='dark'] {
   --background: #121212;
   --foreground: #e2e8f0;
   --card: #171717;
@@ -560,7 +564,7 @@ html[data-theme="supabase"][data-mode="dark"] {
 }
 
 /* ----------------------------- SOLAR DUSK ----------------------------- */
-html[data-theme="solar-dusk"][data-mode="light"] {
+html[data-theme='solar-dusk'][data-mode='light'] {
   --background: #fdfbf7;
   --foreground: #4a3b33;
   --card: #f8f4ee;
@@ -595,11 +599,11 @@ html[data-theme="solar-dusk"][data-mode="light"] {
   --sidebar-ring: #b45309;
   --font-sans: Oxanium, sans-serif;
   --font-serif: Merriweather, serif;
-  --font-mono: "Fira Code", monospace;
+  --font-mono: 'Fira Code', monospace;
   --radius: 0.3rem;
 }
 
-html[data-theme="solar-dusk"][data-mode="dark"] {
+html[data-theme='solar-dusk'][data-mode='dark'] {
   --background: #1c1917;
   --foreground: #f5f5f4;
   --card: #292524;
@@ -634,12 +638,12 @@ html[data-theme="solar-dusk"][data-mode="dark"] {
   --sidebar-ring: #f97316;
   --font-sans: Oxanium, sans-serif;
   --font-serif: Merriweather, serif;
-  --font-mono: "Fira Code", monospace;
+  --font-mono: 'Fira Code', monospace;
   --radius: 0.3rem;
 }
 
 /* ----------------------------- MONO ----------------------------- */
-html[data-theme="mono"][data-mode="light"] {
+html[data-theme='mono'][data-mode='light'] {
   --background: #ffffff;
   --foreground: #0a0a0a;
   --card: #ffffff;
@@ -672,13 +676,13 @@ html[data-theme="mono"][data-mode="light"] {
   --sidebar-accent-foreground: #171717;
   --sidebar-border: #e5e5e5;
   --sidebar-ring: #a1a1a1;
-  --font-sans: "Geist Mono", monospace;
-  --font-serif: "Geist Mono", monospace;
-  --font-mono: "Geist Mono", monospace;
+  --font-sans: 'Geist Mono', monospace;
+  --font-serif: 'Geist Mono', monospace;
+  --font-mono: 'Geist Mono', monospace;
   --radius: 0;
 }
 
-html[data-theme="mono"][data-mode="dark"] {
+html[data-theme='mono'][data-mode='dark'] {
   --background: #0a0a0a;
   --foreground: #fafafa;
   --card: #191919;
@@ -711,14 +715,14 @@ html[data-theme="mono"][data-mode="dark"] {
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: #ffffff;
   --sidebar-ring: #525252;
-  --font-sans: "Geist Mono", monospace;
-  --font-serif: "Geist Mono", monospace;
-  --font-mono: "Geist Mono", monospace;
+  --font-sans: 'Geist Mono', monospace;
+  --font-serif: 'Geist Mono', monospace;
+  --font-mono: 'Geist Mono', monospace;
   --radius: 0;
 }
 
 /* ----------------------------- DOOM 64 ----------------------------- */
-html[data-theme="doom-64"][data-mode="light"] {
+html[data-theme='doom-64'][data-mode='light'] {
   --background: #cccccc;
   --foreground: #1f1f1f;
   --card: #b0b0b0;
@@ -753,11 +757,11 @@ html[data-theme="doom-64"][data-mode="light"] {
   --sidebar-ring: #b71c1c;
   --font-sans: Oxanium, sans-serif;
   --font-serif: ui-serif, Georgia, serif;
-  --font-mono: "Source Code Pro", monospace;
+  --font-mono: 'Source Code Pro', monospace;
   --radius: 0;
 }
 
-html[data-theme="doom-64"][data-mode="dark"] {
+html[data-theme='doom-64'][data-mode='dark'] {
   --background: #1a1a1a;
   --foreground: #e0e0e0;
   --card: #2a2a2a;
@@ -792,7 +796,7 @@ html[data-theme="doom-64"][data-mode="dark"] {
   --sidebar-ring: #e53935;
   --font-sans: Oxanium, sans-serif;
   --font-serif: ui-serif, Georgia, serif;
-  --font-mono: "Source Code Pro", monospace;
+  --font-mono: 'Source Code Pro', monospace;
   --radius: 0;
 }
 
@@ -853,9 +857,88 @@ body {
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --font-heading: var(--font-sans);
 }
 
 @layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
   body {
     @apply bg-background text-foreground;
   }

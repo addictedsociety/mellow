@@ -16,24 +16,28 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <section class="rounded-[2rem] border border-primary/40 bg-accent p-6 text-accent-foreground shadow-sm">
+  <section
+    class="border-primary/40 bg-accent text-accent-foreground rounded-[2rem] border p-6 shadow-sm"
+  >
     <div class="flex items-center justify-between gap-4">
       <div>
-        <p class="text-sm font-medium text-primary">{{ t('dashboard.activeTask') }}</p>
-        <h2 class="mt-2 text-2xl font-semibold text-foreground">
+        <p class="text-primary text-sm font-medium">{{ t('dashboard.activeTask') }}</p>
+        <h2 class="text-foreground mt-2 text-2xl font-semibold">
           {{ runningEntry?.taskTitle ?? t('dashboard.noActiveTask') }}
         </h2>
       </div>
-      <div class="flex size-14 items-center justify-center rounded-3xl bg-card text-primary shadow-sm">
+      <div
+        class="bg-card text-primary flex size-14 items-center justify-center rounded-3xl shadow-sm"
+      >
         <PlayCircle class="size-7" />
       </div>
     </div>
 
     <div class="mt-6 flex items-end justify-between">
-      <p class="font-mono text-4xl font-semibold text-foreground">{{ elapsedLabel }}</p>
+      <p class="text-foreground font-mono text-4xl font-semibold">{{ elapsedLabel }}</p>
       <button
         v-if="runningEntry"
-        class="rounded-2xl bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+        class="bg-primary text-primary-foreground rounded-2xl px-5 py-2 text-sm font-medium transition hover:opacity-90"
         type="button"
         @click="emit('stop')"
       >

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { LayoutDashboard } from 'lucide-vue-next'
 import TaskList from '@/components/tasks/TaskList.vue'
 import TimerCard from '@/components/timer/TimerCard.vue'
 import { getDashboardSummary } from '@/services/task.service'
@@ -29,10 +30,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="scrollbar h-full space-y-6 overflow-y-auto pr-4">
     <header>
-      <h1 class="text-3xl font-semibold">{{ t('dashboard.title') }}</h1>
-      <p class="mt-1 text-muted-foreground">{{ t('dashboard.subtitle') }}</p>
+      <div class="flex flex-col items-center justify-center text-center">
+        <div class="flex items-center gap-2">
+          <LayoutDashboard class="size-7" />
+          <h1 class="text-3xl font-semibold">{{ t('dashboard.title') }}</h1>
+        </div>
+        <p class="text-muted-foreground mt-1">{{ t('dashboard.subtitle') }}</p>
+      </div>
     </header>
 
     <div class="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
@@ -42,8 +48,10 @@ onMounted(() => {
         @stop="timerStore.stopTimer"
       />
 
-      <section class="rounded-[2rem] border border-border bg-card p-6 text-card-foreground shadow-sm">
-        <p class="text-sm font-medium text-muted-foreground">{{ t('dashboard.todayTotal') }}</p>
+      <section
+        class="border-border bg-card text-card-foreground rounded-[2rem] border p-6 shadow-sm"
+      >
+        <p class="text-muted-foreground text-sm font-medium">{{ t('dashboard.todayTotal') }}</p>
         <p class="mt-4 text-4xl font-semibold">{{ todayTotal }}</p>
       </section>
     </div>

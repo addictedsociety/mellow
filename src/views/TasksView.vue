@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue'
 import TaskList from '@/components/tasks/TaskList.vue'
 import ManualTimeEntryDialog from '@/components/timer/ManualTimeEntryDialog.vue'
@@ -10,6 +8,9 @@ import { useTasksStore } from '@/stores/tasks'
 import { useTimerStore } from '@/stores/timer'
 import type { TaskStatus } from '@/types/task.type'
 import type { ManualTimeEntryPayload, TimeEntry } from '@/types/time-entry.type'
+import { ListTodo } from 'lucide-vue-next'
+import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const tasksStore = useTasksStore()
@@ -53,46 +54,51 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="grid gap-6 xl:grid-cols-[420px_1fr]">
+  <div class="scrollbar grid h-full gap-6 overflow-y-auto pr-4 xl:grid-cols-[420px_1fr]">
     <aside class="space-y-4">
       <header>
-        <h1 class="text-3xl font-semibold">{{ t('tasks.title') }}</h1>
-        <p class="mt-1 text-muted-foreground">{{ t('tasks.subtitle') }}</p>
+        <div class="flex flex-col items-center justify-center text-center">
+          <div class="flex items-center gap-2">
+            <ListTodo class="size-8" />
+            <h1 class="text-3xl font-semibold">{{ t('tasks.title') }}</h1>
+          </div>
+          <p class="text-muted-foreground mt-1">{{ t('tasks.subtitle') }}</p>
+        </div>
       </header>
 
       <form
-        class="rounded-[2rem] border border-border bg-card p-5 text-card-foreground shadow-sm"
+        class="border-border bg-card text-card-foreground rounded-[2rem] border p-5 shadow-sm"
         @submit.prevent="submitTask"
       >
         <h2 class="text-lg font-semibold">{{ t('tasks.newTask') }}</h2>
 
-        <label class="mt-4 block text-sm font-medium text-muted-foreground">
+        <label class="text-muted-foreground mt-4 block text-sm font-medium">
           {{ t('tasks.titleLabel') }}
           <input
             v-model="title"
-            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
+            class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
             required
           />
         </label>
 
-        <label class="mt-4 block text-sm font-medium text-muted-foreground">
+        <label class="text-muted-foreground mt-4 block text-sm font-medium">
           {{ t('tasks.status') }}
           <select
             v-model="status"
-            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
+            class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
           >
             <option value="todo">{{ t('status.todo') }}</option>
             <option value="in_progress">{{ t('status.in_progress') }}</option>
           </select>
         </label>
 
-        <label class="mt-4 block text-sm font-medium text-muted-foreground">
+        <label class="text-muted-foreground mt-4 block text-sm font-medium">
           {{ t('tasks.description') }}
           <MarkdownEditor v-model="descriptionMarkdown" class="mt-2" />
         </label>
 
         <button
-          class="mt-5 w-full rounded-2xl bg-primary px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90"
+          class="bg-primary text-primary-foreground mt-5 w-full rounded-2xl px-4 py-3 font-medium transition hover:opacity-90"
           type="submit"
         >
           {{ t('tasks.create') }}
@@ -105,7 +111,7 @@ onMounted(async () => {
     <section class="space-y-6">
       <p
         v-if="timerStore.error"
-        class="rounded-2xl bg-accent px-4 py-3 text-sm text-accent-foreground"
+        class="bg-accent text-accent-foreground rounded-2xl px-4 py-3 text-sm"
       >
         {{ timerStore.error }}
       </p>

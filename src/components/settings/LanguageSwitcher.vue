@@ -1,13 +1,28 @@
 <script setup lang="ts">
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+
 const model = defineModel<'de' | 'en'>({ default: 'de' })
 </script>
 
 <template>
-  <select
-    v-model="model"
-    class="w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
-  >
-    <option value="de">Deutsch</option>
-    <option value="en">English</option>
-  </select>
+  <Select v-model="model">
+    <SelectTrigger class="bg-background h-11 w-full rounded-2xl px-4">
+      <SelectValue placeholder="Select a language" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectLabel>Languages</SelectLabel>
+        <SelectItem value="de"> Deutsch </SelectItem>
+        <SelectItem value="en"> English </SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
 </template>

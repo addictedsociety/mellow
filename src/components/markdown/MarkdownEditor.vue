@@ -11,8 +11,8 @@ const activeTab = ref<'edit' | 'preview'>('edit')
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-3xl border border-border bg-card text-card-foreground">
-    <div class="flex border-b border-border bg-muted p-1">
+  <div class="border-border bg-card text-card-foreground overflow-hidden rounded-3xl border">
+    <div class="border-border bg-muted flex border-b p-1">
       <button
         class="rounded-2xl px-4 py-2 text-sm font-medium transition"
         :class="
@@ -42,7 +42,7 @@ const activeTab = ref<'edit' | 'preview'>('edit')
     <textarea
       v-if="activeTab === 'edit'"
       v-model="model"
-      class="min-h-36 w-full resize-y bg-card p-4 text-sm text-foreground outline-none"
+      class="bg-card text-foreground min-h-36 w-full resize-y p-4 text-sm outline-none"
       :placeholder="t('markdown.placeholder')"
     />
     <div v-else class="min-h-36 p-4">

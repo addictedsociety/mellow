@@ -59,40 +59,45 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div v-if="task" class="grid gap-6 xl:grid-cols-[1fr_420px]">
-    <section class="rounded-[2rem] border border-border bg-card p-6 text-card-foreground shadow-sm">
+  <div
+    v-if="task"
+    class="scrollbar grid h-full gap-6 overflow-y-auto pr-4 xl:grid-cols-[1fr_420px]"
+  >
+    <section class="border-border bg-card text-card-foreground rounded-[2rem] border p-6 shadow-sm">
       <div class="flex items-start justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
             <StatusBadge :status="task.status" :is-tracking="task.isRunning" />
-            <span class="text-sm text-muted-foreground">{{ formatMinutes(task.totalMinutes) }}</span>
+            <span class="text-muted-foreground text-sm">{{
+              formatMinutes(task.totalMinutes)
+            }}</span>
           </div>
           <h1 class="mt-4 text-3xl font-semibold">{{ task.title }}</h1>
-          <p class="mt-2 text-sm text-muted-foreground">{{ formatDate(task.createdAt) }}</p>
+          <p class="text-muted-foreground mt-2 text-sm">{{ formatDate(task.createdAt) }}</p>
         </div>
       </div>
 
       <div v-if="isReadonly" class="mt-6">
-        <p class="mb-4 rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+        <p class="bg-muted text-muted-foreground mb-4 rounded-2xl px-4 py-3 text-sm">
           {{ t('tasks.completedReadonly') }}
         </p>
         <MarkdownPreview :content="task.descriptionMarkdown" />
       </div>
 
       <form v-else class="mt-6 space-y-4" @submit.prevent="save">
-        <label class="block text-sm font-medium text-muted-foreground">
+        <label class="text-muted-foreground block text-sm font-medium">
           {{ t('tasks.titleLabel') }}
           <input
             v-model="title"
-            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
+            class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
           />
         </label>
 
-        <label class="block text-sm font-medium text-muted-foreground">
+        <label class="text-muted-foreground block text-sm font-medium">
           {{ t('tasks.status') }}
           <select
             v-model="status"
-            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
+            class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
           >
             <option value="todo">{{ t('status.todo') }}</option>
             <option value="in_progress">{{ t('status.in_progress') }}</option>
@@ -100,20 +105,20 @@ watchEffect(() => {
           </select>
         </label>
 
-        <label class="block text-sm font-medium text-muted-foreground">
+        <label class="text-muted-foreground block text-sm font-medium">
           {{ t('tasks.description') }}
           <MarkdownEditor v-model="descriptionMarkdown" class="mt-2" />
         </label>
 
         <div class="flex gap-2">
           <button
-            class="rounded-2xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+            class="bg-primary text-primary-foreground rounded-2xl px-5 py-3 text-sm font-medium transition hover:opacity-90"
             type="submit"
           >
             {{ t('tasks.save') }}
           </button>
           <button
-            class="rounded-2xl bg-muted px-5 py-3 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+            class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-5 py-3 text-sm font-medium transition"
             type="button"
             @click="remove"
           >

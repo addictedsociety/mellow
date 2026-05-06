@@ -6,8 +6,10 @@ const { title, description = '' } = defineProps<{
 </script>
 
 <template>
-  <div class="rounded-3xl border border-dashed border-border bg-card/60 p-8 text-center text-card-foreground">
+  <div
+    class="border-border bg-card/60 text-card-foreground rounded-3xl border border-dashed p-8 text-center"
+  >
     <p class="font-medium">{{ title }}</p>
-    <p v-if="description" class="mt-2 text-sm text-muted-foreground">{{ description }}</p>
+    <p v-if="description" class="text-muted-foreground mt-2 text-sm">{{ description }}</p>
   </div>
 </template>

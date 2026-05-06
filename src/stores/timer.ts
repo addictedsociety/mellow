@@ -6,27 +6,33 @@ import {
   stopTimer as requestStopTimer
 } from '@/services/time-entry.service'
 import type { TimeEntry } from '@/types/time-entry.type'
-import { formatSeconds, getElapsedSeconds } from '@/utils/time'
+import { formatSeconds } from '@/utils/time'
 import { useTasksStore } from './tasks'
 
 export const useTimerStore = defineStore('timer', () => {
   const runningEntry = ref<TimeEntry | null>(null)
-  const tick = ref(0)
+  const tick = ref(Date.now())
   const isLoading = ref(false)
   const error = ref('')
 
   let intervalId: number | undefined
 
   const elapsedSeconds = computed(() => {
-    tick.value
-    return getElapsedSeconds(runningEntry.value?.startTime)
+    if (!runningEntry.value?.startTime) {
+      return 0
+    }
+
+    return Math.max(
+      0,
+      Math.floor((tick.value - new Date(runningEntry.value.startTime).getTime()) / 1000)
+    )
   })
   const elapsedLabel = computed(() => formatSeconds(elapsedSeconds.value))
 
   const startTicker = () => {
     window.clearInterval(intervalId)
     intervalId = window.setInterval(() => {
-      tick.value += 1
+      tick.value = Date.now()
     }, 1000)
   }
 

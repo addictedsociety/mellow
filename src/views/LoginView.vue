@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import mellowLogo from '@/assets/mellow_logo.png'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const authStore = useAuthStore()
 const { t } = useI18n()
@@ -35,73 +37,75 @@ const toggleMode = () => {
 </script>
 
 <template>
-  <section class="grid min-h-screen place-items-center bg-background p-6 text-foreground">
-    <form
-      class="w-full max-w-md rounded-[2rem] border border-border bg-card p-8 text-card-foreground shadow-sm"
-      @submit.prevent="submit"
-    >
-      <div class="mb-8 flex items-center gap-3">
+  <section
+    class="bg-background text-foreground grid h-screen place-items-center overflow-hidden p-6"
+  >
+    <Card class="shadow-primary/40 w-full max-w-md rounded-lg px-2 py-8 shadow-lg">
+      <CardHeader class="items-center text-center">
         <img
           :src="mellowLogo"
           :alt="t('app.name')"
-          class="size-12 rounded-3xl object-contain"
+          class="bg-secondary shadow-primary/20 mx-auto mb-3 size-20 rounded-3xl object-contain shadow-lg"
         />
-        <div>
-          <h1 class="text-2xl font-semibold">{{ t('auth.welcome') }}</h1>
-          <p class="mt-1 text-sm text-muted-foreground">{{ t('auth.subtitle') }}</p>
-        </div>
-      </div>
+        <CardTitle class="text-2xl">{{ t('auth.welcome') }}</CardTitle>
+        <CardDescription>{{ t('auth.subtitle') }}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form @submit.prevent="submit">
+          <h2 class="mb-5 text-lg font-medium">{{ title }}</h2>
 
-      <h2 class="mb-5 text-lg font-medium">{{ title }}</h2>
+          <label class="text-muted-foreground block text-sm font-medium">
+            {{ t('auth.username') }}
+            <input
+              v-model="username"
+              class="border-border bg-background text-foreground focus:border-ring mt-2 w-full rounded-2xl border px-4 py-3 outline-none"
+              autocomplete="username"
+              required
+            />
+          </label>
 
-      <label class="block text-sm font-medium text-muted-foreground">
-        {{ t('auth.username') }}
-        <input
-          v-model="username"
-          class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-ring"
-          autocomplete="username"
-          required
-        />
-      </label>
+          <label class="text-muted-foreground mt-4 block text-sm font-medium">
+            {{ t('auth.password') }}
+            <input
+              v-model="password"
+              class="border-border bg-background text-foreground focus:border-ring mt-2 w-full rounded-2xl border px-4 py-3 outline-none"
+              :autocomplete="authStore.isRegisterMode ? 'new-password' : 'current-password'"
+              minlength="8"
+              required
+              type="password"
+            />
+            <span class="text-muted-foreground mt-1 block text-xs">
+              {{ t('auth.passwordHint') }}
+            </span>
+          </label>
 
-      <label class="mt-4 block text-sm font-medium text-muted-foreground">
-        {{ t('auth.password') }}
-        <input
-          v-model="password"
-          class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-ring"
-          :autocomplete="authStore.isRegisterMode ? 'new-password' : 'current-password'"
-          minlength="8"
-          required
-          type="password"
-        />
-        <span class="mt-1 block text-xs text-muted-foreground">{{ t('auth.passwordHint') }}</span>
-      </label>
+          <p
+            v-if="authStore.error"
+            class="bg-destructive/10 text-destructive mt-4 rounded-2xl px-4 py-3 text-sm"
+          >
+            {{ authStore.error }}
+          </p>
 
-      <p
-        v-if="authStore.error"
-        class="mt-4 rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
-      >
-        {{ authStore.error }}
-      </p>
+          <Button
+            class="bg-primary text-primary-foreground mt-6 w-full rounded-2xl px-5 py-3 font-medium transition hover:opacity-90 disabled:opacity-60"
+            :disabled="authStore.isLoading"
+            type="submit"
+          >
+            {{ submitLabel }}
+          </Button>
 
-      <button
-        class="mt-6 w-full rounded-2xl bg-primary px-5 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
-        :disabled="authStore.isLoading"
-        type="submit"
-      >
-        {{ submitLabel }}
-      </button>
-
-      <p v-if="authStore.hasLocalUser" class="mt-5 text-center text-sm text-muted-foreground">
-        {{ authStore.isRegisterMode ? t('auth.haveAccount') : t('auth.noAccount') }}
-        <button
-          class="ml-1 font-medium text-foreground underline-offset-4 hover:underline"
-          type="button"
-          @click="toggleMode"
-        >
-          {{ authStore.isRegisterMode ? t('auth.toLogin') : t('auth.toRegister') }}
-        </button>
-      </p>
-    </form>
+          <p v-if="authStore.hasLocalUser" class="text-muted-foreground mt-5 text-center text-sm">
+            {{ authStore.isRegisterMode ? t('auth.haveAccount') : t('auth.noAccount') }}
+            <Button
+              class="text-primary-foreground ml-1 font-medium underline-offset-4 hover:underline"
+              type="button"
+              @click="toggleMode"
+            >
+              {{ authStore.isRegisterMode ? t('auth.toLogin') : t('auth.toRegister') }}
+            </Button>
+          </p>
+        </form>
+      </CardContent>
+    </Card>
   </section>
 </template>

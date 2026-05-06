@@ -3,7 +3,12 @@ import EmptyState from '@/components/EmptyState.vue'
 import type { Task } from '@/types/task.type'
 import TaskCard from './TaskCard.vue'
 
-const { title, tasks, isReadonly = false, emptyText } = defineProps<{
+const {
+  title,
+  tasks,
+  isReadonly = false,
+  emptyText
+} = defineProps<{
   title: string
   tasks: Task[]
   isReadonly?: boolean
@@ -20,7 +25,7 @@ const emit = defineEmits<{
 
 <template>
   <section>
-    <h2 class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+    <h2 class="text-muted-foreground mb-3 text-sm font-semibold tracking-[0.2em] uppercase">
       {{ title }}
     </h2>
 
