@@ -52,20 +52,26 @@ const submit = () => {
 
 <template>
   <button
-    class="rounded-2xl bg-stone-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-stone-700"
+    class="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
     type="button"
     @click="open"
   >
     {{ t('timeEntries.manual') }}
   </button>
 
-  <div v-if="isOpen" class="fixed inset-0 z-50 grid place-items-center bg-stone-900/30 p-6">
-    <form class="w-full max-w-xl rounded-[2rem] bg-white p-6 shadow-xl" @submit.prevent="submit">
+  <div v-if="isOpen" class="fixed inset-0 z-50 grid place-items-center bg-foreground/40 p-6">
+    <form
+      class="w-full max-w-xl rounded-[2rem] border border-border bg-card p-6 text-card-foreground shadow-xl"
+      @submit.prevent="submit"
+    >
       <h2 class="text-xl font-semibold">{{ t('timeEntries.manual') }}</h2>
 
-      <label class="mt-5 block text-sm font-medium text-stone-600">
+      <label class="mt-5 block text-sm font-medium text-muted-foreground">
         {{ t('tasks.titleLabel') }}
-        <select v-model.number="taskId" class="mt-2 w-full rounded-2xl border border-stone-200 px-4 py-3">
+        <select
+          v-model.number="taskId"
+          class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
+        >
           <option v-for="task in activeTasks" :key="task.id" :value="task.id">
             {{ task.title }}
           </option>
@@ -73,39 +79,42 @@ const submit = () => {
       </label>
 
       <div class="mt-4 grid grid-cols-2 gap-4">
-        <label class="block text-sm font-medium text-stone-600">
+        <label class="block text-sm font-medium text-muted-foreground">
           {{ t('timeEntries.duration') }}
           <input
             v-model.number="durationMinutes"
-            class="mt-2 w-full rounded-2xl border border-stone-200 px-4 py-3"
+            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
             min="1"
             type="number"
           />
         </label>
-        <label class="block text-sm font-medium text-stone-600">
+        <label class="block text-sm font-medium text-muted-foreground">
           {{ t('timeEntries.date') }}
           <input
             v-model="date"
-            class="mt-2 w-full rounded-2xl border border-stone-200 px-4 py-3"
+            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
             type="datetime-local"
           />
         </label>
       </div>
 
-      <label class="mt-4 block text-sm font-medium text-stone-600">
+      <label class="mt-4 block text-sm font-medium text-muted-foreground">
         {{ t('timeEntries.note') }}
         <MarkdownEditor v-model="noteMarkdown" class="mt-2" />
       </label>
 
       <div class="mt-6 flex justify-end gap-2">
         <button
-          class="rounded-2xl bg-stone-100 px-4 py-2 text-sm font-medium text-stone-600"
+          class="rounded-2xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
           type="button"
           @click="isOpen = false"
         >
           {{ t('common.cancel') }}
         </button>
-        <button class="rounded-2xl bg-stone-900 px-4 py-2 text-sm font-medium text-white" type="submit">
+        <button
+          class="rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+          type="submit"
+        >
           {{ t('timeEntries.add') }}
         </button>
       </div>

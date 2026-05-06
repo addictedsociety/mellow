@@ -57,35 +57,44 @@ onMounted(async () => {
     <aside class="space-y-4">
       <header>
         <h1 class="text-3xl font-semibold">{{ t('tasks.title') }}</h1>
-        <p class="mt-1 text-stone-500">{{ t('tasks.subtitle') }}</p>
+        <p class="mt-1 text-muted-foreground">{{ t('tasks.subtitle') }}</p>
       </header>
 
-      <form class="rounded-[2rem] border border-stone-200 bg-white p-5 shadow-sm" @submit.prevent="submitTask">
+      <form
+        class="rounded-[2rem] border border-border bg-card p-5 text-card-foreground shadow-sm"
+        @submit.prevent="submitTask"
+      >
         <h2 class="text-lg font-semibold">{{ t('tasks.newTask') }}</h2>
 
-        <label class="mt-4 block text-sm font-medium text-stone-600">
+        <label class="mt-4 block text-sm font-medium text-muted-foreground">
           {{ t('tasks.titleLabel') }}
           <input
             v-model="title"
-            class="mt-2 w-full rounded-2xl border border-stone-200 px-4 py-3"
+            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
             required
           />
         </label>
 
-        <label class="mt-4 block text-sm font-medium text-stone-600">
+        <label class="mt-4 block text-sm font-medium text-muted-foreground">
           {{ t('tasks.status') }}
-          <select v-model="status" class="mt-2 w-full rounded-2xl border border-stone-200 bg-white px-4 py-3">
+          <select
+            v-model="status"
+            class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-foreground"
+          >
             <option value="todo">{{ t('status.todo') }}</option>
             <option value="in_progress">{{ t('status.in_progress') }}</option>
           </select>
         </label>
 
-        <label class="mt-4 block text-sm font-medium text-stone-600">
+        <label class="mt-4 block text-sm font-medium text-muted-foreground">
           {{ t('tasks.description') }}
           <MarkdownEditor v-model="descriptionMarkdown" class="mt-2" />
         </label>
 
-        <button class="mt-5 w-full rounded-2xl bg-stone-900 px-4 py-3 font-medium text-white" type="submit">
+        <button
+          class="mt-5 w-full rounded-2xl bg-primary px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90"
+          type="submit"
+        >
           {{ t('tasks.create') }}
         </button>
       </form>
@@ -94,7 +103,10 @@ onMounted(async () => {
     </aside>
 
     <section class="space-y-6">
-      <p v-if="timerStore.error" class="rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-700">
+      <p
+        v-if="timerStore.error"
+        class="rounded-2xl bg-accent px-4 py-3 text-sm text-accent-foreground"
+      >
         {{ timerStore.error }}
       </p>
 

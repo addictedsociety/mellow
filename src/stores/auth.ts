@@ -11,16 +11,20 @@ import {
 } from '@/services/auth.service'
 import type { LoginPayload, UserProfile } from '@/types/user.type'
 
+export type AuthMode = 'login' | 'register'
+
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter()
 
   const user = ref<UserProfile | null>(null)
   const hasLocalUser = ref(true)
+  const mode = ref<AuthMode>('login')
   const isInitialized = ref(false)
   const isLoading = ref(false)
   const error = ref('')
 
   const isAuthenticated = computed(() => Boolean(user.value))
+  const isRegisterMode = computed(() => mode.value === 'register')
 
   const applyUser = (nextUser: UserProfile | null) => {
     user.value = nextUser
@@ -28,7 +32,13 @@ export const useAuthStore = defineStore('auth', () => {
     if (nextUser) {
       i18n.global.locale.value = nextUser.language
       document.documentElement.dataset.theme = nextUser.theme
+      document.documentElement.dataset.mode = nextUser.mode
     }
+  }
+
+  const setMode = (nextMode: AuthMode) => {
+    mode.value = nextMode
+    error.value = ''
   }
 
   const initialize = async () => {
@@ -36,6 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       hasLocalUser.value = await requestHasUsers()
+      mode.value = hasLocalUser.value ? 'login' : 'register'
       applyUser(await getCurrentUser())
     } finally {
       isInitialized.value = true
@@ -48,11 +59,12 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = ''
 
     try {
-      const nextUser = hasLocalUser.value
-        ? await requestLogin(payload)
-        : await registerUser(payload)
+      const nextUser = isRegisterMode.value
+        ? await registerUser(payload)
+        : await requestLogin(payload)
 
       hasLocalUser.value = true
+      mode.value = 'login'
       applyUser(nextUser)
       await router.push({ name: 'dashboard' })
     } catch (caughtError) {
@@ -65,16 +77,20 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async () => {
     await requestLogout()
     applyUser(null)
+    mode.value = 'login'
     await router.push({ name: 'login' })
   }
 
   return {
     user,
     hasLocalUser,
+    mode,
     isInitialized,
     isLoading,
     error,
     isAuthenticated,
+    isRegisterMode,
+    setMode,
     initialize,
     authenticate,
     applyUser,

@@ -19,7 +19,6 @@ export const useSettingsStore = defineStore('settings', () => {
       const user = await requestUpdateSettings(payload)
       authStore.applyUser(user)
       i18n.global.locale.value = user.language
-      document.documentElement.dataset.theme = user.theme
     } catch (caughtError) {
       error.value = caughtError instanceof Error ? caughtError.message : String(caughtError)
     } finally {

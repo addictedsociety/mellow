@@ -26,24 +26,24 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
 
 <template>
   <article
-    class="rounded-3xl border bg-white p-5 shadow-sm transition"
-    :class="task.isRunning ? 'border-amber-300 shadow-amber-100' : 'border-stone-200'"
+    class="rounded-3xl border bg-card p-5 text-card-foreground shadow-sm transition"
+    :class="task.isRunning ? 'border-primary shadow-primary/20' : 'border-border'"
   >
     <div class="flex items-start justify-between gap-4">
       <div>
         <RouterLink
-          class="text-lg font-semibold text-stone-900 transition hover:text-amber-700"
+          class="text-lg font-semibold text-foreground transition hover:text-primary"
           :to="{ name: 'task-detail', params: { id: task.id } }"
         >
           {{ task.title }}
         </RouterLink>
         <div class="mt-2 flex flex-wrap items-center gap-2">
           <StatusBadge :status="task.status" :is-tracking="task.isRunning" />
-          <span class="inline-flex items-center gap-1 text-xs text-stone-500">
+          <span class="inline-flex items-center gap-1 text-xs text-muted-foreground">
             <Clock3 class="size-3.5" />
             {{ formatMinutes(task.totalMinutes) }}
           </span>
-          <span v-if="task.completedAt" class="text-xs text-stone-500">
+          <span v-if="task.completedAt" class="text-xs text-muted-foreground">
             {{ formatDate(task.completedAt) }}
           </span>
         </div>
@@ -55,7 +55,7 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
     <div v-if="!isReadonly" class="mt-5 flex flex-wrap gap-2">
       <button
         v-if="!task.isRunning && task.status !== 'done'"
-        class="inline-flex items-center gap-2 rounded-2xl bg-stone-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-stone-700"
+        class="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
         type="button"
         @click="emit('start', task.id)"
       >
@@ -64,7 +64,7 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
       </button>
       <button
         v-if="task.isRunning"
-        class="inline-flex items-center gap-2 rounded-2xl bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700"
+        class="inline-flex items-center gap-2 rounded-2xl bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground transition hover:opacity-90"
         type="button"
         @click="emit('stop')"
       >
@@ -73,14 +73,14 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
       </button>
       <button
         v-if="task.status !== 'done'"
-        class="rounded-2xl bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-200"
+        class="rounded-2xl bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition hover:bg-accent hover:text-accent-foreground"
         type="button"
         @click="emit('complete', task.id)"
       >
         {{ t('tasks.complete') }}
       </button>
       <button
-        class="rounded-2xl bg-stone-100 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-200"
+        class="rounded-2xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
         type="button"
         @click="emit('delete', task.id)"
       >

@@ -13,13 +13,13 @@ const { t } = useI18n()
 const label = computed(() => (isTracking ? t('status.tracking') : t(`status.${status}`)))
 const classes = computed(() => {
   if (isTracking) {
-    return 'bg-amber-100 text-amber-700 ring-amber-200'
+    return 'bg-primary text-primary-foreground ring-primary/40'
   }
 
   return {
-    todo: 'bg-stone-100 text-stone-600 ring-stone-200',
-    in_progress: 'bg-blue-100 text-blue-700 ring-blue-200',
-    done: 'bg-emerald-100 text-emerald-700 ring-emerald-200'
+    todo: 'bg-muted text-muted-foreground ring-border',
+    in_progress: 'bg-accent text-accent-foreground ring-accent',
+    done: 'bg-secondary text-secondary-foreground ring-border'
   }[status]
 })
 </script>

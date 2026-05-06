@@ -16,7 +16,7 @@ onMounted(() => {
   <div class="space-y-6">
     <header>
       <h1 class="text-3xl font-semibold">{{ t('nav.completed') }}</h1>
-      <p class="mt-1 text-stone-500">{{ t('tasks.completedReadonly') }}</p>
+      <p class="mt-1 text-muted-foreground">{{ t('tasks.completedReadonly') }}</p>
     </header>
 
     <TaskList

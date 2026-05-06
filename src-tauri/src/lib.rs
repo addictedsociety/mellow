@@ -23,6 +23,7 @@ struct UserProfile {
     username: String,
     language: String,
     theme: String,
+    mode: String,
     created_at: String,
     updated_at: String,
 }
@@ -101,14 +102,20 @@ struct SettingsPayload {
     username: String,
     language: String,
     theme: String,
+    mode: String,
 }
 
 fn now_string() -> String {
     Utc::now().to_rfc3339()
 }
 
-fn get_connection(state: &State<AppState>) -> CommandResult<std::sync::MutexGuard<'_, Connection>> {
-    state.db.lock().map_err(|_| "Database lock failed".to_string())
+fn get_connection<'a>(
+    state: &'a State<'_, AppState>,
+) -> CommandResult<std::sync::MutexGuard<'a, Connection>> {
+    state
+        .db
+        .lock()
+        .map_err(|_| "Database lock failed".to_string())
 }
 
 fn get_current_user_id(state: &State<AppState>) -> CommandResult<i64> {
@@ -158,7 +165,8 @@ fn init_database(connection: &Connection) -> CommandResult<()> {
                 username TEXT NOT NULL UNIQUE,
                 password_hash TEXT NOT NULL,
                 language TEXT NOT NULL DEFAULT 'de',
-                theme TEXT NOT NULL DEFAULT 'light',
+                theme TEXT NOT NULL DEFAULT 'violet-bloom',
+                mode TEXT NOT NULL DEFAULT 'light',
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             );
@@ -193,7 +201,26 @@ fn init_database(connection: &Connection) -> CommandResult<()> {
             WHERE entry_type = 'tracked' AND end_time IS NULL;
             ",
         )
-        .map_err(|error| format!("Could not initialize database: {error}"))
+        .map_err(|error| format!("Could not initialize database: {error}"))?;
+
+    let has_mode_column = connection
+        .prepare("SELECT 1 FROM pragma_table_info('users') WHERE name = 'mode'")
+        .and_then(|mut stmt| stmt.exists([]))
+        .map_err(|error| format!("Could not inspect users schema: {error}"))?;
+
+    if !has_mode_column {
+        connection
+            .execute_batch(
+                "
+                ALTER TABLE users ADD COLUMN mode TEXT NOT NULL DEFAULT 'light';
+                UPDATE users SET mode = theme, theme = 'violet-bloom'
+                WHERE theme IN ('light', 'dark');
+                ",
+            )
+            .map_err(|error| format!("Could not migrate users schema: {error}"))?;
+    }
+
+    Ok(())
 }
 
 fn row_to_user(row: &Row<'_>) -> rusqlite::Result<UserProfile> {
@@ -202,8 +229,9 @@ fn row_to_user(row: &Row<'_>) -> rusqlite::Result<UserProfile> {
         username: row.get(1)?,
         language: row.get(2)?,
         theme: row.get(3)?,
-        created_at: row.get(4)?,
-        updated_at: row.get(5)?,
+        mode: row.get(4)?,
+        created_at: row.get(5)?,
+        updated_at: row.get(6)?,
     })
 }
 
@@ -239,7 +267,7 @@ fn row_to_time_entry(row: &Row<'_>) -> rusqlite::Result<TimeEntry> {
 fn fetch_user(connection: &Connection, user_id: i64) -> CommandResult<UserProfile> {
     connection
         .query_row(
-            "SELECT id, username, language, theme, created_at, updated_at FROM users WHERE id = ?1",
+            "SELECT id, username, language, theme, mode, created_at, updated_at FROM users WHERE id = ?1",
             params![user_id],
             row_to_user,
         )
@@ -372,30 +400,30 @@ fn current_user(state: State<AppState>) -> CommandResult<Option<UserProfile>> {
 #[tauri::command]
 fn register_user(payload: RegisterPayload, state: State<AppState>) -> CommandResult<UserProfile> {
     if payload.username.trim().is_empty() || payload.password.len() < 8 {
-        return Err("Username is required and password must have at least 8 characters".to_string());
+        return Err(
+            "Username is required and password must have at least 8 characters".to_string(),
+        );
     }
 
     let connection = get_connection(&state)?;
-    let count: i64 = connection
-        .query_row("SELECT COUNT(*) FROM users", [], |row| row.get(0))
-        .map_err(|error| format!("Could not count users: {error}"))?;
-
-    if count > 0 {
-        return Err("A local user already exists".to_string());
-    }
-
     let now = now_string();
     let password_hash = create_password_hash(&payload.password)?;
 
     connection
         .execute(
             "
-            INSERT INTO users (username, password_hash, language, theme, created_at, updated_at)
-            VALUES (?1, ?2, 'de', 'light', ?3, ?3)
+            INSERT INTO users (username, password_hash, language, theme, mode, created_at, updated_at)
+            VALUES (?1, ?2, 'de', 'violet-bloom', 'light', ?3, ?3)
             ",
             params![payload.username.trim(), password_hash, now],
         )
-        .map_err(|error| format!("Could not create user: {error}"))?;
+        .map_err(|error| {
+            if error.to_string().contains("UNIQUE") {
+                "Username already exists".to_string()
+            } else {
+                format!("Could not create user: {error}")
+            }
+        })?;
 
     let user_id = connection.last_insert_rowid();
     *state
@@ -412,7 +440,7 @@ fn login(payload: LoginPayload, state: State<AppState>) -> CommandResult<UserPro
     let user = connection
         .query_row(
             "
-            SELECT id, username, password_hash, language, theme, created_at, updated_at
+            SELECT id, username, password_hash, language, theme, mode, created_at, updated_at
             FROM users
             WHERE username = ?1
             ",
@@ -426,13 +454,15 @@ fn login(payload: LoginPayload, state: State<AppState>) -> CommandResult<UserPro
                     row.get::<_, String>(4)?,
                     row.get::<_, String>(5)?,
                     row.get::<_, String>(6)?,
+                    row.get::<_, String>(7)?,
                 ))
             },
         )
         .optional()
         .map_err(|error| format!("Could not fetch user: {error}"))?;
 
-    let Some((id, username, password_hash, language, theme, created_at, updated_at)) = user else {
+    let Some((id, username, password_hash, language, theme, mode, created_at, updated_at)) = user
+    else {
         return Err("Invalid credentials".to_string());
     };
 
@@ -450,6 +480,7 @@ fn login(payload: LoginPayload, state: State<AppState>) -> CommandResult<UserPro
         username,
         language,
         theme,
+        mode,
         created_at,
         updated_at,
     })
@@ -549,7 +580,10 @@ fn delete_task(id: i64, state: State<AppState>) -> CommandResult<()> {
     let connection = get_connection(&state)?;
 
     connection
-        .execute("DELETE FROM tasks WHERE id = ?1 AND user_id = ?2", params![id, user_id])
+        .execute(
+            "DELETE FROM tasks WHERE id = ?1 AND user_id = ?2",
+            params![id, user_id],
+        )
         .map_err(|error| format!("Could not delete task: {error}"))?;
 
     Ok(())
@@ -722,7 +756,10 @@ fn create_manual_time_entry(
 }
 
 #[tauri::command]
-fn list_time_entries(task_id: Option<i64>, state: State<AppState>) -> CommandResult<Vec<TimeEntry>> {
+fn list_time_entries(
+    task_id: Option<i64>,
+    state: State<AppState>,
+) -> CommandResult<Vec<TimeEntry>> {
     let user_id = get_current_user_id(&state)?;
     let connection = get_connection(&state)?;
 
@@ -821,13 +858,14 @@ fn update_settings(payload: SettingsPayload, state: State<AppState>) -> CommandR
         .execute(
             "
             UPDATE users
-            SET username = ?1, language = ?2, theme = ?3, updated_at = ?4
-            WHERE id = ?5
+            SET username = ?1, language = ?2, theme = ?3, mode = ?4, updated_at = ?5
+            WHERE id = ?6
             ",
             params![
                 payload.username.trim(),
                 payload.language,
                 payload.theme,
+                payload.mode,
                 now,
                 user_id
             ],

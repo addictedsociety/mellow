@@ -11,7 +11,7 @@ const isLoginView = computed(() => route.name === 'login')
 </script>
 
 <template>
-  <main class="min-h-screen bg-[#f7f4ee] text-stone-900">
+  <main class="min-h-screen bg-background text-foreground">
     <RouterView v-if="isLoginView" />
 
     <div v-else class="grid min-h-screen grid-cols-[260px_1fr]">

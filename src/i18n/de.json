@@ -19,7 +19,11 @@
     "username": "Benutzername",
     "password": "Passwort",
     "passwordHint": "Mindestens 8 Zeichen",
-    "error": "Anmeldung fehlgeschlagen"
+    "error": "Anmeldung fehlgeschlagen",
+    "noAccount": "Noch kein Konto?",
+    "haveAccount": "Schon ein Konto?",
+    "toRegister": "Neues Konto anlegen",
+    "toLogin": "Zur Anmeldung"
   },
   "dashboard": {
     "title": "Übersicht",
@@ -73,11 +77,24 @@
     "subtitle": "Passe Mellow an deine Arbeitsweise an.",
     "language": "Sprache",
     "theme": "Theme",
+    "mode": "Modus",
     "light": "Hell",
     "dark": "Dunkel",
     "defaultView": "Standardansicht",
     "userName": "Benutzername",
     "save": "Einstellungen speichern"
+  },
+  "themes": {
+    "default": "Neutral",
+    "violet-bloom": "Violet Bloom",
+    "vercel": "Vercel",
+    "twitter": "Twitter",
+    "tangerine": "Tangerine",
+    "t3-chat": "T3 Chat",
+    "supabase": "Supabase",
+    "solar-dusk": "Solar Dusk",
+    "mono": "Mono",
+    "doom-64": "Doom 64"
   },
   "common": {
     "cancel": "Abbrechen",

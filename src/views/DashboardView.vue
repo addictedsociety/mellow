@@ -32,7 +32,7 @@ onMounted(() => {
   <div class="space-y-6">
     <header>
       <h1 class="text-3xl font-semibold">{{ t('dashboard.title') }}</h1>
-      <p class="mt-1 text-stone-500">{{ t('dashboard.subtitle') }}</p>
+      <p class="mt-1 text-muted-foreground">{{ t('dashboard.subtitle') }}</p>
     </header>
 
     <div class="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
@@ -42,8 +42,8 @@ onMounted(() => {
         @stop="timerStore.stopTimer"
       />
 
-      <section class="rounded-[2rem] border border-stone-200 bg-white p-6 shadow-sm">
-        <p class="text-sm font-medium text-stone-500">{{ t('dashboard.todayTotal') }}</p>
+      <section class="rounded-[2rem] border border-border bg-card p-6 text-card-foreground shadow-sm">
+        <p class="text-sm font-medium text-muted-foreground">{{ t('dashboard.todayTotal') }}</p>
         <p class="mt-4 text-4xl font-semibold">{{ todayTotal }}</p>
       </section>
     </div>

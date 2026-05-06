@@ -127,6 +127,11 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.vscode/
+
+# macOS
+.DS_Store
+._*
 
 # pnpm
 .pnpm-store
@@ -144,3 +149,17 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Local app data
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Rust / Tauri build output
+target/
+src-tauri/target/
+src-tauri/gen/
+src-tauri/.cargo/
+src-tauri/*.log

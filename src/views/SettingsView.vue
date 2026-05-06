@@ -13,12 +13,15 @@ const settingsStore = useSettingsStore()
   <div class="space-y-6">
     <header>
       <h1 class="text-3xl font-semibold">{{ t('settings.title') }}</h1>
-      <p class="mt-1 text-stone-500">{{ t('settings.subtitle') }}</p>
+      <p class="mt-1 text-muted-foreground">{{ t('settings.subtitle') }}</p>
     </header>
 
     <SettingsForm :user="authStore.user" @save="settingsStore.updateSettings" />
 
-    <p v-if="settingsStore.error" class="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">
+    <p
+      v-if="settingsStore.error"
+      class="rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+    >
       {{ settingsStore.error }}
     </p>
   </div>

@@ -19,7 +19,11 @@
     "username": "Username",
     "password": "Password",
     "passwordHint": "At least 8 characters",
-    "error": "Authentication failed"
+    "error": "Authentication failed",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "toRegister": "Create new account",
+    "toLogin": "Back to login"
   },
   "dashboard": {
     "title": "Overview",
@@ -73,11 +77,24 @@
     "subtitle": "Adjust Mellow to your workflow.",
     "language": "Language",
     "theme": "Theme",
+    "mode": "Mode",
     "light": "Light",
     "dark": "Dark",
     "defaultView": "Default view",
     "userName": "User name",
     "save": "Save settings"
+  },
+  "themes": {
+    "default": "Neutral",
+    "violet-bloom": "Violet Bloom",
+    "vercel": "Vercel",
+    "twitter": "Twitter",
+    "tangerine": "Tangerine",
+    "t3-chat": "T3 Chat",
+    "supabase": "Supabase",
+    "solar-dusk": "Solar Dusk",
+    "mono": "Mono",
+    "doom-64": "Doom 64"
   },
   "common": {
     "cancel": "Cancel",

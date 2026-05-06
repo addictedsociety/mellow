@@ -13,20 +13,20 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <section class="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm">
+  <section class="rounded-3xl border border-border bg-card p-5 text-card-foreground shadow-sm">
     <h2 class="text-lg font-semibold">{{ t('timeEntries.title') }}</h2>
 
-    <div v-if="entries.length" class="mt-4 divide-y divide-stone-100">
+    <div v-if="entries.length" class="mt-4 divide-y divide-border">
       <article v-for="entry in entries" :key="entry.id" class="py-4">
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="font-medium">{{ entry.taskTitle }}</p>
-            <p class="text-sm text-stone-500">
+            <p class="text-sm text-muted-foreground">
               {{ entry.entryType === 'manual' ? t('timeEntries.manual') : t('timeEntries.tracked') }}
               · {{ formatDate(entry.startTime) }}
             </p>
           </div>
-          <span class="rounded-full bg-stone-100 px-3 py-1 text-sm font-medium">
+          <span class="rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
             {{ formatMinutes(entry.durationMinutes) }}
           </span>
         </div>

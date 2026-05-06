@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { CheckCircle2, Clock3, LayoutDashboard, ListTodo, LogOut, Settings } from 'lucide-vue-next'
+import { CheckCircle2, LayoutDashboard, ListTodo, LogOut, Settings } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
+import mellowLogo from '@/assets/mellow_logo.png'
 
 const { userName } = defineProps<{
   userName: string
@@ -21,14 +22,16 @@ const links = [
 </script>
 
 <template>
-  <aside class="flex min-h-screen flex-col border-r border-stone-200/80 bg-white/70 p-5 shadow-sm">
+  <aside class="flex min-h-screen flex-col border-r border-sidebar-border bg-sidebar p-5 text-sidebar-foreground shadow-sm">
     <RouterLink :to="{ name: 'dashboard' }" class="mb-8 flex items-center gap-3">
-      <span class="flex size-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
-        <Clock3 class="size-5" />
-      </span>
+      <img
+        :src="mellowLogo"
+        :alt="t('app.name')"
+        class="size-11 rounded-2xl object-contain"
+      />
       <span>
         <strong class="block text-lg font-semibold">{{ t('app.name') }}</strong>
-        <span class="text-xs text-stone-500">{{ t('app.tagline') }}</span>
+        <span class="text-xs text-muted-foreground">{{ t('app.tagline') }}</span>
       </span>
     </RouterLink>
 
@@ -37,19 +40,19 @@ const links = [
         v-for="link in links"
         :key="link.name"
         :to="{ name: link.name }"
-        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-stone-600 transition hover:bg-stone-100"
-        active-class="bg-stone-900 text-white hover:bg-stone-900"
+        class="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-sidebar-foreground transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+        active-class="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary hover:text-sidebar-primary-foreground"
       >
         <component :is="link.icon" class="size-4" />
         {{ t(link.label) }}
       </RouterLink>
     </nav>
 
-    <div class="mt-auto rounded-3xl border border-stone-200 bg-white p-4">
-      <p class="text-xs uppercase tracking-[0.2em] text-stone-400">Local</p>
+    <div class="mt-auto rounded-3xl border border-sidebar-border bg-card p-4 text-card-foreground">
+      <p class="text-xs uppercase tracking-[0.2em] text-muted-foreground">Local</p>
       <p class="mt-1 truncate font-medium">{{ userName }}</p>
       <button
-        class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-stone-100 px-4 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-200"
+        class="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-muted px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
         type="button"
         @click="emit('logout')"
       >

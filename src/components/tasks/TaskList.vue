@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 <template>
   <section>
-    <h2 class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-stone-400">
+    <h2 class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
       {{ title }}
     </h2>
 
