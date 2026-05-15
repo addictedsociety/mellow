@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import mellowLogo from '@/assets/mellow_logo.png'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import VeAnimatedBackground from '@/components/VeAnimatedBackground.vue'
 
 const authStore = useAuthStore()
 const { t } = useI18n()
@@ -38,9 +39,12 @@ const toggleMode = () => {
 
 <template>
   <section
-    class="bg-background text-foreground grid h-screen place-items-center overflow-hidden p-6"
+    class="bg-background text-foreground relative grid h-screen place-items-center overflow-hidden p-6"
   >
-    <Card class="shadow-primary/40 w-full max-w-md rounded-lg px-2 py-8 shadow-lg">
+    <VeAnimatedBackground />
+    <Card
+      class="bg-card/70 border-border/40 shadow-primary/30 relative z-10 w-full max-w-md rounded-lg px-2 py-8 shadow-2xl backdrop-blur-xl"
+    >
       <CardHeader class="items-center text-center">
         <img
           :src="mellowLogo"
