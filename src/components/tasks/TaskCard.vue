@@ -55,7 +55,7 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
     <div v-if="!isReadonly" class="mt-5 flex flex-wrap gap-2">
       <button
         v-if="!task.isRunning && task.status !== 'done'"
-        class="bg-primary text-primary-foreground inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition hover:opacity-90"
+        class="bg-primary text-primary-foreground inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition select-none hover:opacity-90"
         type="button"
         @click="emit('start', task.id)"
       >
@@ -64,7 +64,7 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
       </button>
       <button
         v-if="task.isRunning"
-        class="bg-destructive text-destructive-foreground inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition hover:opacity-90"
+        class="bg-destructive text-destructive-foreground inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition select-none hover:opacity-90"
         type="button"
         @click="emit('stop')"
       >
@@ -73,14 +73,14 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
       </button>
       <button
         v-if="task.status !== 'done'"
-        class="bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-4 py-2 text-sm font-medium transition"
+        class="bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-4 py-2 text-sm font-medium transition select-none"
         type="button"
         @click="emit('complete', task.id)"
       >
         {{ t('tasks.complete') }}
       </button>
       <button
-        class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-4 py-2 text-sm font-medium transition"
+        class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-4 py-2 text-sm font-medium transition select-none"
         type="button"
         @click="emit('delete', task.id)"
       >

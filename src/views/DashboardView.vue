@@ -35,9 +35,9 @@ onMounted(() => {
       <div class="flex flex-col items-center justify-center text-center">
         <div class="flex items-center gap-2">
           <LayoutDashboard class="size-7" />
-          <h1 class="text-3xl font-semibold">{{ t('dashboard.title') }}</h1>
+          <h1 class="text-3xl font-semibold select-none">{{ t('dashboard.title') }}</h1>
         </div>
-        <p class="text-muted-foreground mt-1">{{ t('dashboard.subtitle') }}</p>
+        <p class="text-muted-foreground mt-1 select-none">{{ t('dashboard.subtitle') }}</p>
       </div>
     </header>
 
@@ -51,8 +51,10 @@ onMounted(() => {
       <section
         class="border-border bg-card text-card-foreground rounded-[2rem] border p-6 shadow-sm"
       >
-        <p class="text-muted-foreground text-sm font-medium">{{ t('dashboard.todayTotal') }}</p>
-        <p class="mt-4 text-4xl font-semibold">{{ todayTotal }}</p>
+        <p class="text-muted-foreground text-sm font-medium select-none">
+          {{ t('dashboard.todayTotal') }}
+        </p>
+        <p class="mt-4 text-4xl font-semibold select-none">{{ todayTotal }}</p>
       </section>
     </div>
 

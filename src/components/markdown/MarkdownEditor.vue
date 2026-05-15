@@ -14,7 +14,7 @@ const activeTab = ref<'edit' | 'preview'>('edit')
   <div class="border-border bg-card text-card-foreground overflow-hidden rounded-3xl border">
     <div class="border-border bg-muted flex border-b p-1">
       <button
-        class="rounded-2xl px-4 py-2 text-sm font-medium transition"
+        class="rounded-2xl px-4 py-2 text-sm font-medium transition select-none"
         :class="
           activeTab === 'edit'
             ? 'bg-card text-foreground shadow-sm'
@@ -26,7 +26,7 @@ const activeTab = ref<'edit' | 'preview'>('edit')
         {{ t('markdown.edit') }}
       </button>
       <button
-        class="rounded-2xl px-4 py-2 text-sm font-medium transition"
+        class="rounded-2xl px-4 py-2 text-sm font-medium transition select-none"
         :class="
           activeTab === 'preview'
             ? 'bg-card text-foreground shadow-sm'

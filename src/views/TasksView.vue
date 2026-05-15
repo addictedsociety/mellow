@@ -11,6 +11,15 @@ import type { ManualTimeEntryPayload, TimeEntry } from '@/types/time-entry.type'
 import { ListTodo } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 
 const { t } = useI18n()
 const tasksStore = useTasksStore()
@@ -60,9 +69,9 @@ onMounted(async () => {
         <div class="flex flex-col items-center justify-center text-center">
           <div class="flex items-center gap-2">
             <ListTodo class="size-8" />
-            <h1 class="text-3xl font-semibold">{{ t('tasks.title') }}</h1>
+            <h1 class="text-3xl font-semibold select-none">{{ t('tasks.title') }}</h1>
           </div>
-          <p class="text-muted-foreground mt-1">{{ t('tasks.subtitle') }}</p>
+          <p class="text-muted-foreground mt-1 select-none">{{ t('tasks.subtitle') }}</p>
         </div>
       </header>
 
@@ -70,39 +79,40 @@ onMounted(async () => {
         class="border-border bg-card text-card-foreground rounded-[2rem] border p-5 shadow-sm"
         @submit.prevent="submitTask"
       >
-        <h2 class="text-lg font-semibold">{{ t('tasks.newTask') }}</h2>
+        <h2 class="text-start text-lg font-semibold select-none">{{ t('tasks.newTask') }}</h2>
 
-        <label class="text-muted-foreground mt-4 block text-sm font-medium">
+        <label class="text-muted-foreground mt-4 block text-start text-sm font-medium select-none">
           {{ t('tasks.titleLabel') }}
-          <input
+          <Input
             v-model="title"
             class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
             required
           />
         </label>
 
-        <label class="text-muted-foreground mt-4 block text-sm font-medium">
+        <label class="text-muted-foreground mt-4 block text-start text-sm font-medium select-none">
           {{ t('tasks.status') }}
-          <select
-            v-model="status"
-            class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
-          >
-            <option value="todo">{{ t('status.todo') }}</option>
-            <option value="in_progress">{{ t('status.in_progress') }}</option>
-          </select>
+          <Select v-model="status">
+            <SelectTrigger
+              class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
+            >
+              <SelectValue :placeholder="t('tasks.status')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todo">{{ t('status.todo') }}</SelectItem>
+              <SelectItem value="in_progress">{{ t('status.in_progress') }}</SelectItem>
+            </SelectContent>
+          </Select>
         </label>
 
-        <label class="text-muted-foreground mt-4 block text-sm font-medium">
+        <label class="text-muted-foreground mt-4 block text-start text-sm font-medium select-none">
           {{ t('tasks.description') }}
           <MarkdownEditor v-model="descriptionMarkdown" class="mt-2" />
         </label>
 
-        <button
-          class="bg-primary text-primary-foreground mt-5 w-full rounded-2xl px-4 py-3 font-medium transition hover:opacity-90"
-          type="submit"
-        >
+        <Button type="submit" class="mt-4 select-none">
           {{ t('tasks.create') }}
-        </button>
+        </Button>
       </form>
 
       <ManualTimeEntryDialog :tasks="tasksStore.tasks" @save="addManualEntry" />
@@ -111,7 +121,7 @@ onMounted(async () => {
     <section class="space-y-6">
       <p
         v-if="timerStore.error"
-        class="bg-accent text-accent-foreground rounded-2xl px-4 py-3 text-sm"
+        class="bg-accent text-accent-foreground rounded-2xl px-4 py-3 text-sm select-none"
       >
         {{ timerStore.error }}
       </p>

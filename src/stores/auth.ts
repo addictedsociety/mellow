@@ -31,8 +31,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     if (nextUser) {
       i18n.global.locale.value = nextUser.language
-      document.documentElement.dataset.theme = nextUser.theme
-      document.documentElement.dataset.mode = nextUser.mode
     }
   }
 

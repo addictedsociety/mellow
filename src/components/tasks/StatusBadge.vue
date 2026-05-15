@@ -26,7 +26,7 @@ const classes = computed(() => {
 
 <template>
   <span
-    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1"
+    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 select-none"
     :class="classes"
   >
     {{ label }}

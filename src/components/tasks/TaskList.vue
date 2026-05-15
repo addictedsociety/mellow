@@ -2,7 +2,7 @@
 import EmptyState from '@/components/EmptyState.vue'
 import type { Task } from '@/types/task.type'
 import TaskCard from './TaskCard.vue'
-
+import { CircleOff } from 'lucide-vue-next'
 const {
   title,
   tasks,
@@ -25,7 +25,9 @@ const emit = defineEmits<{
 
 <template>
   <section>
-    <h2 class="text-muted-foreground mb-3 text-sm font-semibold tracking-[0.2em] uppercase">
+    <h2
+      class="text-muted-foreground mb-3 text-sm font-semibold tracking-[0.2em] uppercase select-none"
+    >
       {{ title }}
     </h2>
 
@@ -41,6 +43,6 @@ const emit = defineEmits<{
         @delete="emit('delete', $event)"
       />
     </div>
-    <EmptyState v-else :title="emptyText" />
+    <EmptyState v-else :title="emptyText" :icon="CircleOff" />
   </section>
 </template>

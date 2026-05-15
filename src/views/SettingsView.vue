@@ -16,9 +16,9 @@ const settingsStore = useSettingsStore()
       <div class="flex flex-col items-center justify-center text-center">
         <div class="flex items-center gap-2">
           <Settings class="size-7" />
-          <h1 class="text-3xl font-semibold">{{ t('settings.title') }}</h1>
+          <h1 class="text-3xl font-semibold select-none">{{ t('settings.title') }}</h1>
         </div>
-        <p class="text-muted-foreground mt-1">{{ t('settings.subtitle') }}</p>
+        <p class="text-muted-foreground mt-1 select-none">{{ t('settings.subtitle') }}</p>
       </div>
     </header>
 

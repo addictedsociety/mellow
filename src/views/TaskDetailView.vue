@@ -11,6 +11,15 @@ import { useTasksStore } from '@/stores/tasks'
 import type { TaskStatus } from '@/types/task.type'
 import type { TimeEntry } from '@/types/time-entry.type'
 import { formatDate, formatMinutes } from '@/utils/time'
+import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 
 const { id } = defineProps<{
   id: string
@@ -78,52 +87,49 @@ watchEffect(() => {
       </div>
 
       <div v-if="isReadonly" class="mt-6">
-        <p class="bg-muted text-muted-foreground mb-4 rounded-2xl px-4 py-3 text-sm">
+        <p class="bg-muted text-muted-foreground mb-4 rounded-2xl px-4 py-3 text-sm select-none">
           {{ t('tasks.completedReadonly') }}
         </p>
         <MarkdownPreview :content="task.descriptionMarkdown" />
       </div>
 
       <form v-else class="mt-6 space-y-4" @submit.prevent="save">
-        <label class="text-muted-foreground block text-sm font-medium">
+        <label class="text-muted-foreground block text-sm font-medium select-none">
           {{ t('tasks.titleLabel') }}
-          <input
+          <Input
             v-model="title"
             class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
           />
         </label>
 
-        <label class="text-muted-foreground block text-sm font-medium">
+        <label class="text-muted-foreground block text-sm font-medium select-none">
           {{ t('tasks.status') }}
-          <select
-            v-model="status"
-            class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
-          >
-            <option value="todo">{{ t('status.todo') }}</option>
-            <option value="in_progress">{{ t('status.in_progress') }}</option>
-            <option value="done">{{ t('status.done') }}</option>
-          </select>
+          <Select v-model="status">
+            <SelectTrigger
+              class="border-border bg-background text-foreground mt-2 w-full rounded-2xl border px-4 py-3"
+            >
+              <SelectValue :placeholder="t('tasks.status')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todo">{{ t('status.todo') }}</SelectItem>
+              <SelectItem value="in_progress">{{ t('status.in_progress') }}</SelectItem>
+              <SelectItem value="done">{{ t('status.done') }}</SelectItem>
+            </SelectContent>
+          </Select>
         </label>
 
-        <label class="text-muted-foreground block text-sm font-medium">
+        <label class="text-muted-foreground block text-sm font-medium select-none">
           {{ t('tasks.description') }}
           <MarkdownEditor v-model="descriptionMarkdown" class="mt-2" />
         </label>
 
         <div class="flex gap-2">
-          <button
-            class="bg-primary text-primary-foreground rounded-2xl px-5 py-3 text-sm font-medium transition hover:opacity-90"
-            type="submit"
-          >
+          <Button type="submit" class="select-none">
             {{ t('tasks.save') }}
-          </button>
-          <button
-            class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-5 py-3 text-sm font-medium transition"
-            type="button"
-            @click="remove"
-          >
+          </Button>
+          <Button type="button" class="select-none" @click="remove">
             {{ t('tasks.delete') }}
-          </button>
+          </Button>
         </div>
       </form>
     </section>

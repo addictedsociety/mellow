@@ -1,9 +1,21 @@
 <!doctype html>
-<html lang="en" data-theme="violet-bloom" data-mode="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mellow</title>
+    <title>mellow</title>
+    <script>
+      ;(function () {
+        try {
+          var theme = localStorage.getItem('mellow:theme') || 'violet-bloom'
+          var mode = localStorage.getItem('mellow:mode') || 'dark'
+          document.documentElement.dataset.theme = theme
+          document.documentElement.dataset.mode = mode
+        } catch (error) {
+          // localStorage nicht verfügbar – Defaults aus dem html-Tag bleiben aktiv
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

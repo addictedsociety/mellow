@@ -52,7 +52,7 @@ const submit = () => {
 
 <template>
   <button
-    class="bg-primary text-primary-foreground rounded-2xl px-4 py-2 text-sm font-medium transition hover:opacity-90"
+    class="bg-primary text-primary-foreground rounded-2xl px-4 py-2 text-sm font-medium transition select-none hover:opacity-90"
     type="button"
     @click="open"
   >
@@ -64,9 +64,9 @@ const submit = () => {
       class="border-border bg-card text-card-foreground w-full max-w-xl rounded-[2rem] border p-6 shadow-xl"
       @submit.prevent="submit"
     >
-      <h2 class="text-xl font-semibold">{{ t('timeEntries.manual') }}</h2>
+      <h2 class="text-xl font-semibold select-none">{{ t('timeEntries.manual') }}</h2>
 
-      <label class="text-muted-foreground mt-5 block text-sm font-medium">
+      <label class="text-muted-foreground mt-5 block text-sm font-medium select-none">
         {{ t('tasks.titleLabel') }}
         <select
           v-model.number="taskId"
@@ -79,7 +79,7 @@ const submit = () => {
       </label>
 
       <div class="mt-4 grid grid-cols-2 gap-4">
-        <label class="text-muted-foreground block text-sm font-medium">
+        <label class="text-muted-foreground block text-sm font-medium select-none">
           {{ t('timeEntries.duration') }}
           <input
             v-model.number="durationMinutes"
@@ -88,7 +88,7 @@ const submit = () => {
             type="number"
           />
         </label>
-        <label class="text-muted-foreground block text-sm font-medium">
+        <label class="text-muted-foreground block text-sm font-medium select-none">
           {{ t('timeEntries.date') }}
           <input
             v-model="date"
@@ -98,21 +98,21 @@ const submit = () => {
         </label>
       </div>
 
-      <label class="text-muted-foreground mt-4 block text-sm font-medium">
+      <label class="text-muted-foreground mt-4 block text-sm font-medium select-none">
         {{ t('timeEntries.note') }}
         <MarkdownEditor v-model="noteMarkdown" class="mt-2" />
       </label>
 
       <div class="mt-6 flex justify-end gap-2">
         <button
-          class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-4 py-2 text-sm font-medium transition"
+          class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-2xl px-4 py-2 text-sm font-medium transition select-none"
           type="button"
           @click="isOpen = false"
         >
           {{ t('common.cancel') }}
         </button>
         <button
-          class="bg-primary text-primary-foreground rounded-2xl px-4 py-2 text-sm font-medium transition hover:opacity-90"
+          class="bg-primary text-primary-foreground rounded-2xl px-4 py-2 text-sm font-medium transition select-none hover:opacity-90"
           type="submit"
         >
           {{ t('timeEntries.add') }}

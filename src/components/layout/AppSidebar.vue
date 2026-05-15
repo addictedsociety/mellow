@@ -37,10 +37,10 @@ const links = [
   <Sidebar collapsible="none" class="border-sidebar-border border-r shadow-sm">
     <SidebarHeader class="p-5">
       <RouterLink :to="{ name: 'dashboard' }" class="flex items-center gap-3">
-        <img :src="mellowLogo" :alt="t('app.name')" class="size-11 rounded-2xl object-contain" />
-        <span>
+        <img :src="mellowLogo" :alt="t('app.name')" class="size-14 rounded-2xl object-contain" />
+        <span class="text-start select-none">
           <strong class="block text-lg font-semibold">{{ t('app.name') }}</strong>
-          <span class="text-muted-foreground text-xs">{{ t('app.tagline') }}</span>
+          <span class="text-muted-foreground text-xs leading-tight">{{ t('app.tagline') }}</span>
         </span>
       </RouterLink>
     </SidebarHeader>
@@ -56,7 +56,7 @@ const links = [
           >
             <RouterLink :to="{ name: link.name }">
               <component :is="link.icon" class="size-4" />
-              <span>{{ t(link.label) }}</span>
+              <span class="select-none">{{ t(link.label) }}</span>
             </RouterLink>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -65,11 +65,11 @@ const links = [
 
     <SidebarFooter class="p-5">
       <div class="border-sidebar-border bg-card text-card-foreground rounded-3xl border p-4">
-        <p class="text-muted-foreground text-xs tracking-[0.2em] uppercase">Local</p>
-        <p class="mt-1 truncate font-medium">{{ userName }}</p>
+        <p class="text-muted-foreground text-xs tracking-[0.2em] uppercase select-none">Local</p>
+        <p class="mt-1 truncate font-medium select-none">{{ userName }}</p>
         <Button
           variant="secondary"
-          class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground mt-4 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition"
+          class="bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground mt-4 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition select-none"
           type="button"
           @click="emit('logout')"
         >

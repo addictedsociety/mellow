@@ -27,7 +27,7 @@ const isLoginView = computed(() => route.name === 'login')
     >
       <AppSidebar
         v-if="authStore.isAuthenticated"
-        :user-name="authStore.user?.username ?? 'Mellow'"
+        :user-name="authStore.user?.username ?? 'mellow'"
         @logout="authStore.logout"
       />
 

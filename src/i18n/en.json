@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Mellow",
+    "name": "mellow",
     "tagline": "Calm time tracking for focused work"
   },
   "nav": {
@@ -26,7 +26,7 @@
     "toLogin": "Back to login"
   },
   "dashboard": {
-    "title": "Overview",
+    "title": "Dashboard",
     "subtitle": "A calm view of your day.",
     "activeTask": "Active task",
     "todayTotal": "Tracked today",

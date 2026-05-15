@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Mellow",
+    "name": "mellow",
     "tagline": "Ruhige Zeiterfassung für fokussierte Arbeit"
   },
   "nav": {
@@ -11,7 +11,7 @@
     "logout": "Abmelden"
   },
   "auth": {
-    "welcome": "Willkommen bei Mellow",
+    "welcome": "Willkommen bei mellow",
     "subtitle": "Melde dich lokal an. Alle Daten bleiben auf deinem Gerät.",
     "firstUser": "Ersten lokalen Benutzer erstellen",
     "login": "Anmelden",
@@ -26,7 +26,7 @@
     "toLogin": "Zur Anmeldung"
   },
   "dashboard": {
-    "title": "Übersicht",
+    "title": "Dashboard",
     "subtitle": "Dein ruhiger Überblick über heute.",
     "activeTask": "Aktive Aufgabe",
     "todayTotal": "Heute erfasst",

@@ -19,9 +19,9 @@ onMounted(() => {
       <div class="flex flex-col items-center justify-center text-center">
         <div class="flex items-center gap-2">
           <CheckCircle2 class="size-7" />
-          <h1 class="text-3xl font-semibold">{{ t('nav.completed') }}</h1>
+          <h1 class="text-3xl font-semibold select-none">{{ t('nav.completed') }}</h1>
         </div>
-        <p class="text-muted-foreground mt-1">{{ t('tasks.completedReadonly') }}</p>
+        <p class="text-muted-foreground mt-1 select-none">{{ t('tasks.completedReadonly') }}</p>
       </div>
     </header>
 

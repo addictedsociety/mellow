@@ -21,8 +21,11 @@ const { t } = useI18n()
   >
     <div class="flex items-center justify-between gap-4">
       <div>
-        <p class="text-primary text-sm font-medium">{{ t('dashboard.activeTask') }}</p>
-        <h2 class="text-foreground mt-2 text-2xl font-semibold">
+        <p class="text-primary text-sm font-medium select-none">{{ t('dashboard.activeTask') }}</p>
+        <h2
+          class="text-foreground mt-2 text-2xl font-semibold"
+          :class="{ 'select-none': !runningEntry }"
+        >
           {{ runningEntry?.taskTitle ?? t('dashboard.noActiveTask') }}
         </h2>
       </div>
@@ -37,7 +40,7 @@ const { t } = useI18n()
       <p class="text-foreground font-mono text-4xl font-semibold">{{ elapsedLabel }}</p>
       <button
         v-if="runningEntry"
-        class="bg-primary text-primary-foreground rounded-2xl px-5 py-2 text-sm font-medium transition hover:opacity-90"
+        class="bg-primary text-primary-foreground rounded-2xl px-5 py-2 text-sm font-medium transition select-none hover:opacity-90"
         type="button"
         @click="emit('stop')"
       >

@@ -47,14 +47,14 @@ const toggleMode = () => {
           :alt="t('app.name')"
           class="bg-secondary shadow-primary/20 mx-auto mb-3 size-20 rounded-3xl object-contain shadow-lg"
         />
-        <CardTitle class="text-2xl">{{ t('auth.welcome') }}</CardTitle>
-        <CardDescription>{{ t('auth.subtitle') }}</CardDescription>
+        <CardTitle class="text-2xl select-none">{{ t('auth.welcome') }}</CardTitle>
+        <CardDescription class="select-none">{{ t('auth.subtitle') }}</CardDescription>
       </CardHeader>
       <CardContent>
         <form @submit.prevent="submit">
-          <h2 class="mb-5 text-lg font-medium">{{ title }}</h2>
+          <h2 class="mb-5 text-lg font-medium select-none">{{ title }}</h2>
 
-          <label class="text-muted-foreground block text-sm font-medium">
+          <label class="text-muted-foreground block text-sm font-medium select-none">
             {{ t('auth.username') }}
             <input
               v-model="username"
@@ -64,7 +64,7 @@ const toggleMode = () => {
             />
           </label>
 
-          <label class="text-muted-foreground mt-4 block text-sm font-medium">
+          <label class="text-muted-foreground mt-4 block text-sm font-medium select-none">
             {{ t('auth.password') }}
             <input
               v-model="password"
@@ -74,7 +74,7 @@ const toggleMode = () => {
               required
               type="password"
             />
-            <span class="text-muted-foreground mt-1 block text-xs">
+            <span class="text-muted-foreground mt-1 block text-xs select-none">
               {{ t('auth.passwordHint') }}
             </span>
           </label>
@@ -87,17 +87,20 @@ const toggleMode = () => {
           </p>
 
           <Button
-            class="bg-primary text-primary-foreground mt-6 w-full rounded-2xl px-5 py-3 font-medium transition hover:opacity-90 disabled:opacity-60"
+            class="bg-primary text-primary-foreground mt-6 w-full rounded-2xl px-5 py-3 font-medium transition select-none hover:opacity-90 disabled:opacity-60"
             :disabled="authStore.isLoading"
             type="submit"
           >
             {{ submitLabel }}
           </Button>
 
-          <p v-if="authStore.hasLocalUser" class="text-muted-foreground mt-5 text-center text-sm">
+          <p
+            v-if="authStore.hasLocalUser"
+            class="text-muted-foreground mt-5 text-center text-sm select-none"
+          >
             {{ authStore.isRegisterMode ? t('auth.haveAccount') : t('auth.noAccount') }}
             <Button
-              class="text-primary-foreground ml-1 font-medium underline-offset-4 hover:underline"
+              class="text-primary-foreground ml-1 font-medium underline-offset-4 select-none hover:underline"
               type="button"
               @click="toggleMode"
             >
