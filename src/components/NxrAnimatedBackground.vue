@@ -19,7 +19,7 @@ let resizeObserver: ResizeObserver | null = null
 let themeObserver: MutationObserver | null = null
 let colorProbe: HTMLDivElement | null = null
 
-const clock = new THREE.Clock()
+const timer = new THREE.Timer()
 const pointer = { x: 0, y: 0, tx: 0, ty: 0 }
 
 const cssColorToVec3 = (cssVar: string, fallback: [number, number, number]): THREE.Vector3 => {
@@ -228,7 +228,8 @@ const handlePointerMove = (event: PointerEvent) => {
 
 const animate = () => {
   if (!renderer || !scene || !camera || !auroraMesh || !particles) return
-  const elapsed = clock.getElapsedTime()
+  timer.update()
+  const elapsed = timer.getElapsed()
 
   pointer.x += (pointer.tx - pointer.x) * 0.05
   pointer.y += (pointer.ty - pointer.y) * 0.05
@@ -314,7 +315,6 @@ onMounted(() => {
 
   window.addEventListener('pointermove', handlePointerMove)
 
-  clock.start()
   animate()
 })
 

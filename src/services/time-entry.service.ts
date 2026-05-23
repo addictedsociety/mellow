@@ -3,9 +3,6 @@ import type { TimeEntry } from '@/types/time-entry.type'
 
 export const startTimer = (taskId: number) => invoke<TimeEntry>('start_timer', { taskId })
 
-export const stopTimer = () => invoke<TimeEntry>('stop_timer')
+export const stopTimer = (taskId: number) => invoke<TimeEntry>('stop_timer', { taskId })
 
-export const getRunningEntry = () => invoke<TimeEntry | null>('get_running_entry')
-
-export const listTimeEntries = (taskId?: number) =>
-  invoke<TimeEntry[]>('list_time_entries', { taskId: taskId ?? null })
+export const getRunningEntries = () => invoke<TimeEntry[]>('get_running_entries')

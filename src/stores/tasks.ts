@@ -7,6 +7,7 @@ import {
   listTasks as requestTasks,
   updateTask as requestUpdateTask
 } from '@/services/task.service'
+import { useTimerStore } from '@/stores/timer'
 import type { Task, TaskPayload, TaskStatus } from '@/types/task.type'
 
 export const useTasksStore = defineStore('tasks', () => {
@@ -54,6 +55,10 @@ export const useTasksStore = defineStore('tasks', () => {
   }
 
   const completeTask = async (id: number) => {
+    const timerStore = useTimerStore()
+    if (timerStore.isTaskRunning(id)) {
+      await timerStore.stopTimer(id)
+    }
     const task = await requestCompleteTask(id)
     tasks.value = tasks.value.map((currentTask) => (currentTask.id === id ? task : currentTask))
     await loadTasks()

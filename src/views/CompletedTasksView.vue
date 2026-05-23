@@ -3,7 +3,7 @@ import { CheckCircle2 } from 'lucide-vue-next'
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TaskList from '@/components/tasks/TaskList.vue'
-import VeFilterBar from '@/components/VeFilterBar.vue'
+import NxrFilterBar from '@/components/NxrFilterBar.vue'
 import { useTasksStore } from '@/stores/tasks'
 import { useTaskFilter } from '@/utils/useTaskFilter'
 
@@ -18,7 +18,7 @@ const { searchQuery, sortField, sortOrder, filteredAndSorted } = useTaskFilter(
 const sortFields = computed(() => [
   { value: 'title', label: t('filter.fields.title') },
   { value: 'createdAt', label: t('filter.fields.createdAt') },
-  { value: 'totalMinutes', label: t('filter.fields.totalMinutes') }
+  { value: 'totalSeconds', label: t('filter.fields.totalTime') }
 ])
 
 onMounted(() => {
@@ -38,7 +38,7 @@ onMounted(() => {
       </div>
     </header>
 
-    <VeFilterBar
+    <NxrFilterBar
       v-model:search="searchQuery"
       v-model:sort-field="sortField"
       v-model:sort-order="sortOrder"
@@ -50,6 +50,7 @@ onMounted(() => {
       :tasks="filteredAndSorted"
       :empty-text="t('tasks.empty')"
       is-readonly
+      @delete="tasksStore.deleteTask"
     />
   </div>
 </template>

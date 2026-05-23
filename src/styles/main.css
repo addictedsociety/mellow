@@ -24,7 +24,7 @@ select {
 }
 
 .markdown-body {
-  @apply text-foreground/90 text-sm leading-7;
+  @apply text-foreground/90 text-start text-sm leading-7;
 }
 
 .markdown-body h1,

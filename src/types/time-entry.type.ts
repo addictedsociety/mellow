@@ -6,7 +6,7 @@ export interface TimeEntry {
   taskTitle: string
   startTime: string | null
   endTime: string | null
-  durationMinutes: number
+  durationSeconds: number
   noteMarkdown: string
   entryType: TimeEntryType
   createdAt: string

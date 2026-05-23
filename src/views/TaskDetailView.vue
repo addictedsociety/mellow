@@ -3,14 +3,12 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue'
-import MarkdownPreview from '@/components/markdown/MarkdownPreview.vue'
+import NxrTimePill from '@/components/NxrTimePill.vue'
 import StatusBadge from '@/components/tasks/StatusBadge.vue'
-import TimeEntryList from '@/components/timer/TimeEntryList.vue'
-import { listTimeEntries } from '@/services/time-entry.service'
 import { useTasksStore } from '@/stores/tasks'
+import { useTimerStore } from '@/stores/timer'
 import type { TaskStatus } from '@/types/task.type'
-import type { TimeEntry } from '@/types/time-entry.type'
-import { formatDate, formatMinutes } from '@/utils/time'
+import { formatDate, formatDuration } from '@/utils/time'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -28,15 +26,17 @@ const { id } = defineProps<{
 const router = useRouter()
 const { t } = useI18n()
 const tasksStore = useTasksStore()
+const timerStore = useTimerStore()
 
-const entries = ref<TimeEntry[]>([])
 const title = ref('')
 const descriptionMarkdown = ref('')
 const status = ref<TaskStatus>('todo')
 
 const taskId = computed(() => Number(id))
 const task = computed(() => tasksStore.tasks.find((currentTask) => currentTask.id === taskId.value))
-const isReadonly = computed(() => task.value?.status === 'done')
+const cumulativeLabel = computed(() =>
+  task.value ? timerStore.getCumulativeLabel(task.value.id, task.value.totalSeconds) : ''
+)
 
 const save = async () => {
   await tasksStore.updateTask(taskId.value, {
@@ -53,7 +53,6 @@ const remove = async () => {
 
 onMounted(async () => {
   await tasksStore.loadTasks()
-  entries.value = await listTimeEntries(taskId.value)
 })
 
 watchEffect(() => {
@@ -68,32 +67,25 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div
-    v-if="task"
-    class="scrollbar grid h-full gap-6 overflow-y-auto pr-4 xl:grid-cols-[1fr_420px]"
-  >
+  <div v-if="task" class="scrollbar h-full overflow-y-auto pr-4">
     <section class="border-border bg-card text-card-foreground rounded-[2rem] border p-6 shadow-sm">
       <div class="flex items-start justify-between gap-4">
-        <div>
+        <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2">
             <StatusBadge :status="task.status" :is-tracking="task.isRunning" />
-            <span class="text-muted-foreground text-sm">{{
-              formatMinutes(task.totalMinutes)
-            }}</span>
+            <span class="text-muted-foreground text-sm select-none">
+              {{ formatDuration(task.totalSeconds) }}
+            </span>
           </div>
           <h1 class="mt-4 text-3xl font-semibold">{{ task.title }}</h1>
           <p class="text-muted-foreground mt-2 text-sm">{{ formatDate(task.createdAt) }}</p>
         </div>
+
+        <NxrTimePill v-if="task.isRunning" :time="cumulativeLabel" is-live />
+        <NxrTimePill v-else-if="task.totalSeconds > 0" :time="formatDuration(task.totalSeconds)" />
       </div>
 
-      <div v-if="isReadonly" class="mt-6">
-        <p class="bg-muted text-muted-foreground mb-4 rounded-2xl px-4 py-3 text-sm select-none">
-          {{ t('tasks.completedReadonly') }}
-        </p>
-        <MarkdownPreview :content="task.descriptionMarkdown" />
-      </div>
-
-      <form v-else class="mt-6 space-y-4" @submit.prevent="save">
+      <form class="mt-6 space-y-4" @submit.prevent="save">
         <label class="text-muted-foreground block text-sm font-medium select-none">
           {{ t('tasks.titleLabel') }}
           <Input
@@ -128,13 +120,11 @@ watchEffect(() => {
           <Button type="submit" class="select-none">
             {{ t('tasks.save') }}
           </Button>
-          <Button type="button" class="select-none" @click="remove">
+          <Button type="button" variant="outline" class="select-none" @click="remove">
             {{ t('tasks.delete') }}
           </Button>
         </div>
       </form>
     </section>
-
-    <TimeEntryList :entries="entries" />
   </div>
 </template>

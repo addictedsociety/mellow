@@ -1,7 +1,7 @@
 import { computed, onScopeDispose, ref } from 'vue'
 import { defineStore } from 'pinia'
 import {
-  getRunningEntry,
+  getRunningEntries,
   startTimer as requestStartTimer,
   stopTimer as requestStopTimer
 } from '@/services/time-entry.service'
@@ -10,27 +10,60 @@ import { formatSeconds } from '@/utils/time'
 import { useTasksStore } from './tasks'
 
 export const useTimerStore = defineStore('timer', () => {
-  const runningEntry = ref<TimeEntry | null>(null)
+  const runningEntries = ref<TimeEntry[]>([])
   const tick = ref(Date.now())
   const isLoading = ref(false)
   const error = ref('')
 
   let intervalId: number | undefined
 
-  const elapsedSeconds = computed(() => {
-    if (!runningEntry.value?.startTime) {
-      return 0
+  const elapsedSecondsByTask = computed<Record<number, number>>(() => {
+    const result: Record<number, number> = {}
+    for (const entry of runningEntries.value) {
+      if (!entry.startTime) {
+        continue
+      }
+      result[entry.taskId] = Math.max(
+        0,
+        Math.floor((tick.value - new Date(entry.startTime).getTime()) / 1000)
+      )
     }
-
-    return Math.max(
-      0,
-      Math.floor((tick.value - new Date(runningEntry.value.startTime).getTime()) / 1000)
-    )
+    return result
   })
-  const elapsedLabel = computed(() => formatSeconds(elapsedSeconds.value))
+
+  const elapsedLabelByTask = computed<Record<number, string>>(() => {
+    const result: Record<number, string> = {}
+    for (const [taskId, seconds] of Object.entries(elapsedSecondsByTask.value)) {
+      result[Number(taskId)] = formatSeconds(seconds)
+    }
+    return result
+  })
+
+  const totalElapsedSeconds = computed(() =>
+    Object.values(elapsedSecondsByTask.value).reduce((sum, value) => sum + value, 0)
+  )
+
+  const totalElapsedLabel = computed(() => formatSeconds(totalElapsedSeconds.value))
+
+  const activeCount = computed(() => runningEntries.value.length)
+
+  const getElapsedSeconds = (taskId: number) => elapsedSecondsByTask.value[taskId] ?? 0
+
+  const getElapsedLabel = (taskId: number) => elapsedLabelByTask.value[taskId] ?? formatSeconds(0)
+
+  const getCumulativeSeconds = (taskId: number, baseSeconds: number) =>
+    baseSeconds + getElapsedSeconds(taskId)
+
+  const getCumulativeLabel = (taskId: number, baseSeconds: number) =>
+    formatSeconds(getCumulativeSeconds(taskId, baseSeconds))
+
+  const isTaskRunning = (taskId: number) =>
+    runningEntries.value.some((entry) => entry.taskId === taskId)
 
   const startTicker = () => {
-    window.clearInterval(intervalId)
+    if (intervalId !== undefined) {
+      return
+    }
     intervalId = window.setInterval(() => {
       tick.value = Date.now()
     }, 1000)
@@ -41,14 +74,18 @@ export const useTimerStore = defineStore('timer', () => {
     intervalId = undefined
   }
 
-  const loadRunningEntry = async () => {
-    runningEntry.value = await getRunningEntry()
-
-    if (runningEntry.value) {
+  const syncTicker = () => {
+    if (runningEntries.value.length > 0) {
       startTicker()
     } else {
       stopTicker()
     }
+  }
+
+  const loadRunningEntries = async () => {
+    runningEntries.value = await getRunningEntries()
+    tick.value = Date.now()
+    syncTicker()
   }
 
   const startTimer = async (taskId: number) => {
@@ -57,8 +94,15 @@ export const useTimerStore = defineStore('timer', () => {
     error.value = ''
 
     try {
-      runningEntry.value = await requestStartTimer(taskId)
-      startTicker()
+      const entry = await requestStartTimer(taskId)
+      const existingIndex = runningEntries.value.findIndex((item) => item.taskId === taskId)
+      if (existingIndex >= 0) {
+        runningEntries.value.splice(existingIndex, 1, entry)
+      } else {
+        runningEntries.value.push(entry)
+      }
+      tick.value = Date.now()
+      syncTicker()
       await tasksStore.loadTasks()
     } catch (caughtError) {
       error.value = caughtError instanceof Error ? caughtError.message : String(caughtError)
@@ -67,15 +111,15 @@ export const useTimerStore = defineStore('timer', () => {
     }
   }
 
-  const stopTimer = async () => {
+  const stopTimer = async (taskId: number) => {
     const tasksStore = useTasksStore()
     isLoading.value = true
     error.value = ''
 
     try {
-      await requestStopTimer()
-      runningEntry.value = null
-      stopTicker()
+      await requestStopTimer(taskId)
+      runningEntries.value = runningEntries.value.filter((entry) => entry.taskId !== taskId)
+      syncTicker()
       await tasksStore.loadTasks()
     } catch (caughtError) {
       error.value = caughtError instanceof Error ? caughtError.message : String(caughtError)
@@ -89,12 +133,20 @@ export const useTimerStore = defineStore('timer', () => {
   })
 
   return {
-    runningEntry,
+    runningEntries,
     isLoading,
     error,
-    elapsedSeconds,
-    elapsedLabel,
-    loadRunningEntry,
+    activeCount,
+    totalElapsedSeconds,
+    totalElapsedLabel,
+    elapsedLabelByTask,
+    elapsedSecondsByTask,
+    getElapsedSeconds,
+    getElapsedLabel,
+    getCumulativeSeconds,
+    getCumulativeLabel,
+    isTaskRunning,
+    loadRunningEntries,
     startTimer,
     stopTimer
   }

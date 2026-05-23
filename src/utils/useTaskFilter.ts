@@ -2,7 +2,7 @@ import { useFuse } from '@vueuse/integrations/useFuse'
 import { computed, ref, toValue, type MaybeRefOrGetter } from 'vue'
 import type { Task, TaskStatus } from '@/types/task.type'
 
-export type TaskSortField = 'title' | 'createdAt' | 'status' | 'totalMinutes'
+export type TaskSortField = 'title' | 'createdAt' | 'status' | 'totalSeconds'
 export type SortOrder = 'asc' | 'desc'
 
 const STATUS_ORDER: Record<TaskStatus, number> = {
@@ -43,8 +43,8 @@ export const useTaskFilter = (
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       case 'status':
         return STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
-      case 'totalMinutes':
-        return a.totalMinutes - b.totalMinutes
+      case 'totalSeconds':
+        return a.totalSeconds - b.totalSeconds
     }
   }
 

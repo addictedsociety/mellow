@@ -4,8 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue'
 import TaskList from '@/components/tasks/TaskList.vue'
-import TimeEntryList from '@/components/timer/TimeEntryList.vue'
-import VeFilterBar from '@/components/VeFilterBar.vue'
+import NxrFilterBar from '@/components/NxrFilterBar.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,11 +14,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { listTimeEntries } from '@/services/time-entry.service'
 import { useTasksStore } from '@/stores/tasks'
 import { useTimerStore } from '@/stores/timer'
 import type { TaskStatus } from '@/types/task.type'
-import type { TimeEntry } from '@/types/time-entry.type'
 import { useTaskFilter } from '@/utils/useTaskFilter'
 
 const { t } = useI18n()
@@ -29,7 +26,6 @@ const timerStore = useTimerStore()
 const title = ref('')
 const descriptionMarkdown = ref('')
 const status = ref<TaskStatus>('todo')
-const entries = ref<TimeEntry[]>([])
 
 const { searchQuery, sortField, sortOrder, filteredAndSorted } = useTaskFilter(
   () => tasksStore.activeTasks,
@@ -40,7 +36,7 @@ const sortFields = computed(() => [
   { value: 'title', label: t('filter.fields.title') },
   { value: 'createdAt', label: t('filter.fields.createdAt') },
   { value: 'status', label: t('filter.fields.status') },
-  { value: 'totalMinutes', label: t('filter.fields.totalMinutes') }
+  { value: 'totalSeconds', label: t('filter.fields.totalTime') }
 ])
 
 const resetForm = () => {
@@ -59,8 +55,7 @@ const submitTask = async () => {
 }
 
 onMounted(async () => {
-  await Promise.all([tasksStore.loadTasks(), timerStore.loadRunningEntry()])
-  entries.value = await listTimeEntries()
+  await Promise.all([tasksStore.loadTasks(), timerStore.loadRunningEntries()])
 })
 </script>
 
@@ -112,10 +107,11 @@ onMounted(async () => {
           {{ t('tasks.description') }}
           <MarkdownEditor v-model="descriptionMarkdown" class="mt-2" />
         </label>
-
-        <Button type="submit" class="mt-4 select-none">
-          {{ t('tasks.create') }}
-        </Button>
+        <div class="flex justify-center">
+          <Button type="submit" class="mt-4 justify-center select-none">
+            {{ t('tasks.create') }}
+          </Button>
+        </div>
       </form>
     </aside>
 
@@ -127,7 +123,7 @@ onMounted(async () => {
         {{ timerStore.error }}
       </p>
 
-      <VeFilterBar
+      <NxrFilterBar
         v-model:search="searchQuery"
         v-model:sort-field="sortField"
         v-model:sort-order="sortOrder"
@@ -143,8 +139,6 @@ onMounted(async () => {
         @complete="tasksStore.completeTask"
         @delete="tasksStore.deleteTask"
       />
-
-      <TimeEntryList :entries="entries" />
     </section>
   </div>
 </template>

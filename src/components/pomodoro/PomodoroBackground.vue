@@ -17,27 +17,69 @@ type Palette = {
   intensity: number
 }
 
-const MODE_PALETTES: Record<PomodoroMode, Palette> = {
+type ModeStyle = {
+  primaryVar: string
+  secondaryVar: string
+  primaryFallback: [number, number, number]
+  secondaryFallback: [number, number, number]
+  speed: number
+  intensity: number
+}
+
+const MODE_STYLES: Record<PomodoroMode, ModeStyle> = {
   focus: {
-    primary: new THREE.Vector3(0.96, 0.32, 0.36),
-    secondary: new THREE.Vector3(1.0, 0.58, 0.3),
-    background: new THREE.Vector3(0.07, 0.04, 0.06),
-    speed: 0.4,
+    primaryVar: '--primary',
+    secondaryVar: '--chart-1',
+    primaryFallback: [0.96, 0.32, 0.36],
+    secondaryFallback: [1.0, 0.58, 0.3],
+    speed: 0.2,
     intensity: 1.15
   },
   shortBreak: {
-    primary: new THREE.Vector3(0.32, 0.86, 0.86),
-    secondary: new THREE.Vector3(0.55, 0.95, 0.7),
-    background: new THREE.Vector3(0.04, 0.07, 0.09),
-    speed: 0.2,
+    primaryVar: '--chart-2',
+    secondaryVar: '--chart-3',
+    primaryFallback: [0.32, 0.86, 0.86],
+    secondaryFallback: [0.55, 0.95, 0.7],
+    speed: 0.1,
     intensity: 0.85
   },
   longBreak: {
-    primary: new THREE.Vector3(0.66, 0.44, 1.0),
-    secondary: new THREE.Vector3(0.95, 0.55, 0.85),
-    background: new THREE.Vector3(0.06, 0.04, 0.1),
-    speed: 0.1,
+    primaryVar: '--chart-4',
+    secondaryVar: '--primary',
+    primaryFallback: [0.66, 0.44, 1.0],
+    secondaryFallback: [0.95, 0.55, 0.85],
+    speed: 0.05,
     intensity: 0.95
+  }
+}
+
+let colorProbe: HTMLDivElement | null = null
+
+const cssColorToVec3 = (cssVar: string, fallback: [number, number, number]): THREE.Vector3 => {
+  if (!colorProbe) return new THREE.Vector3(...fallback)
+  colorProbe.style.color = ''
+  colorProbe.style.color = `var(${cssVar})`
+  const rgb = getComputedStyle(colorProbe).color
+  const match = rgb.match(/rgba?\(([^)]+)\)/)
+  if (!match) return new THREE.Vector3(...fallback)
+  const parts = match[1].split(',').map((v) => parseFloat(v.trim()) / 255)
+  return new THREE.Vector3(
+    parts[0] ?? fallback[0],
+    parts[1] ?? fallback[1],
+    parts[2] ?? fallback[2]
+  )
+}
+
+const buildPalette = (next: PomodoroMode): Palette => {
+  const style = MODE_STYLES[next]
+  const backgroundColor = cssColorToVec3('--background', [0.05, 0.05, 0.07])
+  const tinted = backgroundColor.clone().multiplyScalar(0.85)
+  return {
+    primary: cssColorToVec3(style.primaryVar, style.primaryFallback),
+    secondary: cssColorToVec3(style.secondaryVar, style.secondaryFallback),
+    background: tinted,
+    speed: style.speed,
+    intensity: style.intensity
   }
 }
 
@@ -50,7 +92,7 @@ const targetState = {
 }
 
 const applyMode = (next: PomodoroMode) => {
-  const palette = MODE_PALETTES[next]
+  const palette = buildPalette(next)
   targetState.primary.copy(palette.primary)
   targetState.secondary.copy(palette.secondary)
   targetState.background.copy(palette.background)
@@ -58,17 +100,16 @@ const applyMode = (next: PomodoroMode) => {
   targetState.intensity = palette.intensity
 }
 
-applyMode(mode)
-
 let renderer: THREE.WebGLRenderer | null = null
 let scene: THREE.Scene | null = null
 let camera: THREE.OrthographicCamera | null = null
 let mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.ShaderMaterial> | null = null
 let frameId = 0
 let resizeObserver: ResizeObserver | null = null
+let themeObserver: MutationObserver | null = null
 let phase = 0
 
-const clock = new THREE.Clock()
+const timer = new THREE.Timer()
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -163,7 +204,8 @@ const fragmentShader = /* glsl */ `
 const animate = () => {
   if (!renderer || !scene || !camera || !mesh) return
 
-  const dt = clock.getDelta()
+  timer.update()
+  const dt = timer.getDelta()
   const u = mesh.material.uniforms
   const lerpFactor = 0.04
 
@@ -197,6 +239,12 @@ watch(
 onMounted(() => {
   if (!containerRef.value) return
 
+  colorProbe = document.createElement('div')
+  colorProbe.style.display = 'none'
+  containerRef.value.appendChild(colorProbe)
+
+  applyMode(mode)
+
   scene = new THREE.Scene()
   camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
   camera.position.z = 1
@@ -206,8 +254,6 @@ onMounted(() => {
   renderer.setSize(containerRef.value.clientWidth, containerRef.value.clientHeight, false)
   containerRef.value.appendChild(renderer.domElement)
 
-  const palette = MODE_PALETTES[mode]
-
   const material = new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
@@ -216,11 +262,11 @@ onMounted(() => {
       uResolution: {
         value: new THREE.Vector2(containerRef.value.clientWidth, containerRef.value.clientHeight)
       },
-      uIntensity: { value: palette.intensity },
-      uSpeed: { value: palette.speed },
-      uPrimary: { value: palette.primary.clone() },
-      uSecondary: { value: palette.secondary.clone() },
-      uBackground: { value: palette.background.clone() }
+      uIntensity: { value: targetState.intensity },
+      uSpeed: { value: targetState.speed },
+      uPrimary: { value: targetState.primary.clone() },
+      uSecondary: { value: targetState.secondary.clone() },
+      uBackground: { value: targetState.background.clone() }
     }
   })
   mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material)
@@ -229,23 +275,33 @@ onMounted(() => {
   resizeObserver = new ResizeObserver(resize)
   resizeObserver.observe(containerRef.value)
 
-  clock.start()
+  themeObserver = new MutationObserver(() => applyMode(mode))
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme', 'data-mode', 'class']
+  })
+
   animate()
 })
 
 onBeforeUnmount(() => {
   cancelAnimationFrame(frameId)
   resizeObserver?.disconnect()
+  themeObserver?.disconnect()
   mesh?.geometry.dispose()
   mesh?.material.dispose()
   renderer?.dispose()
   if (renderer?.domElement && containerRef.value?.contains(renderer.domElement)) {
     containerRef.value.removeChild(renderer.domElement)
   }
+  if (colorProbe && containerRef.value?.contains(colorProbe)) {
+    containerRef.value.removeChild(colorProbe)
+  }
   renderer = null
   scene = null
   camera = null
   mesh = null
+  colorProbe = null
 })
 </script>
 

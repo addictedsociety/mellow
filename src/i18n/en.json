@@ -20,6 +20,8 @@
     "username": "Username",
     "password": "Password",
     "passwordHint": "At least 8 characters",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "error": "Authentication failed",
     "noAccount": "No account yet?",
     "haveAccount": "Already have an account?",
@@ -30,6 +32,9 @@
     "title": "Dashboard",
     "subtitle": "A calm view of your day.",
     "activeTask": "Active task",
+    "activeTimers": "Active timers",
+    "activeTimersCount": "{count} active",
+    "noActiveTimers": "No timer is currently running",
     "todayTotal": "Tracked today",
     "noActiveTask": "No timer is currently running."
   },
@@ -50,7 +55,13 @@
     "details": "Details",
     "empty": "No tasks yet.",
     "timerRunning": "A timer is already running. Stop it first.",
-    "completedReadonly": "Completed tasks are read-only by default."
+    "completedReadonly": "Completed tasks are read-only by default.",
+    "showDescription": "Show description",
+    "hideDescription": "Hide description",
+    "confirmDelete": {
+      "title": "Delete task?",
+      "description": "\"{title}\" and all of its time entries will be permanently removed."
+    }
   },
   "status": {
     "todo": "Todo",
@@ -69,7 +80,7 @@
       "title": "Title",
       "createdAt": "Created",
       "status": "Status",
-      "totalMinutes": "Tracked minutes"
+      "totalTime": "Tracked time"
     }
   },
   "timeEntries": {
@@ -117,7 +128,15 @@
       "description": "The current timer will be discarded and reset to the full duration of the selected phase.",
       "confirm": "Switch"
     },
-    "session": "Focused sessions"
+    "session": "Focused sessions",
+    "settings": {
+      "title": "Pomodoro settings",
+      "description": "Set the duration of each phase in minutes.",
+      "focusMinutes": "Focus (minutes)",
+      "shortBreakMinutes": "Short break (minutes)",
+      "longBreakMinutes": "Long break (minutes)",
+      "save": "Save"
+    }
   },
   "settings": {
     "title": "Settings",

@@ -1,25 +1,33 @@
-import { computed, onScopeDispose, ref } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
+import { computed, onScopeDispose, ref } from 'vue'
 
 export type PomodoroMode = 'focus' | 'shortBreak' | 'longBreak'
 
-const DURATIONS: Record<PomodoroMode, number> = {
+const DEFAULT_DURATIONS: Record<PomodoroMode, number> = {
   focus: 25 * 60,
   shortBreak: 5 * 60,
   longBreak: 15 * 60
 }
 
 const SESSIONS_UNTIL_LONG_BREAK = 4
+const DURATIONS_STORAGE_KEY = 'mellow:pomodoro:durations'
 
 export const usePomodoroStore = defineStore('pomodoro', () => {
+  const durations = useLocalStorage<Record<PomodoroMode, number>>(
+    DURATIONS_STORAGE_KEY,
+    { ...DEFAULT_DURATIONS },
+    { mergeDefaults: true }
+  )
+
   const mode = ref<PomodoroMode>('focus')
-  const remainingSeconds = ref(DURATIONS.focus)
+  const remainingSeconds = ref(durations.value.focus)
   const isRunning = ref(false)
   const completedFocusSessions = ref(0)
 
   let intervalId: number | undefined
 
-  const totalSeconds = computed(() => DURATIONS[mode.value])
+  const totalSeconds = computed(() => durations.value[mode.value])
   const progress = computed(() =>
     totalSeconds.value === 0 ? 0 : 1 - remainingSeconds.value / totalSeconds.value
   )
@@ -46,7 +54,7 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
       mode.value = 'focus'
     }
 
-    remainingSeconds.value = DURATIONS[mode.value]
+    remainingSeconds.value = durations.value[mode.value]
   }
 
   const handleCompletion = () => {
@@ -94,7 +102,7 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
 
   const reset = () => {
     pause()
-    remainingSeconds.value = DURATIONS[mode.value]
+    remainingSeconds.value = durations.value[mode.value]
   }
 
   const setMode = (next: PomodoroMode) => {
@@ -105,12 +113,35 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
 
     pause()
     mode.value = next
-    remainingSeconds.value = DURATIONS[next]
+    remainingSeconds.value = durations.value[next]
   }
 
   const skipForward = () => {
     pause()
     advanceMode()
+  }
+
+  const updateDurations = (payload: Partial<Record<PomodoroMode, number>>) => {
+    const currentMode = mode.value
+    const next: Record<PomodoroMode, number> = { ...durations.value }
+    let isCurrentAffected = false
+
+    for (const key of Object.keys(payload) as PomodoroMode[]) {
+      const value = payload[key]
+      if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
+        continue
+      }
+      next[key] = Math.round(value)
+      if (key === currentMode) {
+        isCurrentAffected = true
+      }
+    }
+
+    durations.value = next
+
+    if (isCurrentAffected) {
+      reset()
+    }
   }
 
   onScopeDispose(() => {
@@ -122,6 +153,7 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     remainingSeconds,
     isRunning,
     completedFocusSessions,
+    durations,
     totalSeconds,
     progress,
     minutesLabel,
@@ -132,6 +164,7 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     toggle,
     reset,
     setMode,
-    skipForward
+    skipForward,
+    updateDurations
   }
 })

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
+import NxrAnimatedBackground from '@/components/NxrAnimatedBackground.vue'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { useAuthStore } from '@/stores/auth'
 
@@ -15,15 +16,23 @@ const isLoginView = computed(() => route.name === 'login')
   <main
     :class="
       isLoginView
-        ? 'bg-background text-foreground min-h-screen overflow-hidden'
-        : 'bg-background text-foreground grid h-screen place-items-center overflow-hidden p-5'
+        ? 'bg-background text-foreground relative min-h-screen overflow-hidden'
+        : 'bg-background text-foreground relative grid h-screen place-items-center overflow-hidden p-5'
     "
   >
+    <div
+      v-if="!isLoginView"
+      class="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      aria-hidden="true"
+    >
+      <NxrAnimatedBackground :intensity="0.4" :particle-count="35" />
+    </div>
+
     <RouterView v-if="isLoginView" />
 
     <SidebarProvider
       v-else
-      class="border-border bg-background shadow-primary/10 h-full min-h-0 w-full overflow-hidden rounded-3xl border shadow-2xl"
+      class="border-border bg-background shadow-primary/10 relative z-10 h-full min-h-0 w-full overflow-hidden rounded-3xl border shadow-2xl"
     >
       <AppSidebar
         v-if="authStore.isAuthenticated"

@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { Coffee, Flame, Pause, Play, RotateCcw, SkipForward, Sparkles } from 'lucide-vue-next'
+import {
+  Coffee,
+  Flame,
+  Pause,
+  Play,
+  RotateCcw,
+  Settings,
+  SkipForward,
+  Sparkles
+} from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import VeConfirmDialog from '@/components/VeConfirmDialog.vue'
+import NxrConfirmDialog from '@/components/NxrConfirmDialog.vue'
+import PomodoroSettingsDialog from '@/components/pomodoro/PomodoroSettingsDialog.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { usePomodoroStore, type PomodoroMode } from '@/stores/pomodoro'
@@ -47,6 +57,7 @@ const pomodoroStore = usePomodoroStore()
 const isResetDialogOpen = ref(false)
 const isSkipDialogOpen = ref(false)
 const isModeChangeDialogOpen = ref(false)
+const isSettingsDialogOpen = ref(false)
 const pendingMode = ref<PomodoroMode | null>(null)
 
 const modes = computed<{ key: PomodoroMode; label: string }[]>(() => [
@@ -118,7 +129,19 @@ const handleSkipConfirm = () => {
 
 <template>
   <div class="flex w-full flex-col items-center">
-    <Card class="bg-card/60 border-border/40 w-full rounded-3xl shadow-xl backdrop-blur-xl">
+    <Card
+      class="bg-card/60 border-border/40 relative w-full rounded-3xl shadow-xl backdrop-blur-xl"
+    >
+      <Button
+        size="icon"
+        variant="ghost"
+        class="text-muted-foreground hover:text-foreground absolute top-4 right-4"
+        :aria-label="t('pomodoro.settings.title')"
+        :title="t('pomodoro.settings.title')"
+        @click="isSettingsDialogOpen = true"
+      >
+        <Settings class="size-5" />
+      </Button>
       <CardContent class="flex flex-col items-center gap-8 px-6 py-10 sm:px-10">
         <div
           class="bg-muted/60 flex flex-wrap items-center justify-center gap-1 rounded-full p-1 backdrop-blur-md"
@@ -196,7 +219,7 @@ const handleSkipConfirm = () => {
       </CardContent>
     </Card>
 
-    <VeConfirmDialog
+    <NxrConfirmDialog
       v-model="isResetDialogOpen"
       :title="t('pomodoro.confirmReset.title')"
       :description="t('pomodoro.confirmReset.description')"
@@ -205,7 +228,7 @@ const handleSkipConfirm = () => {
       @confirm="handleResetConfirm"
     />
 
-    <VeConfirmDialog
+    <NxrConfirmDialog
       v-model="isSkipDialogOpen"
       :title="t('pomodoro.confirmSkip.title')"
       :description="t('pomodoro.confirmSkip.description')"
@@ -213,12 +236,14 @@ const handleSkipConfirm = () => {
       @confirm="handleSkipConfirm"
     />
 
-    <VeConfirmDialog
+    <NxrConfirmDialog
       v-model="isModeChangeDialogOpen"
       :title="t('pomodoro.confirmModeChange.title', { mode: pendingModeLabel })"
       :description="t('pomodoro.confirmModeChange.description')"
       :confirm-label="t('pomodoro.confirmModeChange.confirm')"
       @confirm="handleModeChangeConfirm"
     />
+
+    <PomodoroSettingsDialog v-model="isSettingsDialogOpen" />
   </div>
 </template>

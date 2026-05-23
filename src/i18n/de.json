@@ -20,6 +20,8 @@
     "username": "Benutzername",
     "password": "Passwort",
     "passwordHint": "Mindestens 8 Zeichen",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
     "error": "Anmeldung fehlgeschlagen",
     "noAccount": "Noch kein Konto?",
     "haveAccount": "Schon ein Konto?",
@@ -30,6 +32,9 @@
     "title": "Dashboard",
     "subtitle": "Dein ruhiger Überblick über heute.",
     "activeTask": "Aktive Aufgabe",
+    "activeTimers": "Aktive Timer",
+    "activeTimersCount": "{count} aktiv",
+    "noActiveTimers": "Kein Timer läuft gerade",
     "todayTotal": "Heute erfasst",
     "noActiveTask": "Kein Timer läuft gerade."
   },
@@ -50,7 +55,13 @@
     "details": "Details",
     "empty": "Noch keine Aufgaben vorhanden.",
     "timerRunning": "Ein Timer läuft bereits. Stoppe ihn zuerst.",
-    "completedReadonly": "Erledigte Aufgaben sind standardmäßig schreibgeschützt."
+    "completedReadonly": "Erledigte Aufgaben sind standardmäßig schreibgeschützt.",
+    "showDescription": "Beschreibung anzeigen",
+    "hideDescription": "Beschreibung verbergen",
+    "confirmDelete": {
+      "title": "Aufgabe löschen?",
+      "description": "„{title}\" und alle zugehörigen Zeiteinträge werden unwiderruflich gelöscht."
+    }
   },
   "status": {
     "todo": "Todo",
@@ -69,7 +80,7 @@
       "title": "Titel",
       "createdAt": "Erstellt",
       "status": "Status",
-      "totalMinutes": "Erfasste Minuten"
+      "totalTime": "Erfasste Zeit"
     }
   },
   "timeEntries": {
@@ -117,7 +128,15 @@
       "description": "Der laufende Timer wird verworfen und auf die volle Dauer der gewählten Phase gesetzt.",
       "confirm": "Wechseln"
     },
-    "session": "Focussed Sessions"
+    "session": "Focussed Sessions",
+    "settings": {
+      "title": "Pomodoro-Einstellungen",
+      "description": "Lege die Dauer der einzelnen Phasen in Minuten fest.",
+      "focusMinutes": "Fokus (Minuten)",
+      "shortBreakMinutes": "Kurze Pause (Minuten)",
+      "longBreakMinutes": "Lange Pause (Minuten)",
+      "save": "Speichern"
+    }
   },
   "settings": {
     "title": "Einstellungen",

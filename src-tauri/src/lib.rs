@@ -38,7 +38,7 @@ struct Task {
     created_at: String,
     updated_at: String,
     completed_at: Option<String>,
-    total_minutes: i64,
+    total_seconds: i64,
     is_running: bool,
 }
 
@@ -50,7 +50,7 @@ struct TimeEntry {
     task_title: String,
     start_time: Option<String>,
     end_time: Option<String>,
-    duration_minutes: i64,
+    duration_seconds: i64,
     note_markdown: String,
     entry_type: String,
     created_at: String,
@@ -60,8 +60,8 @@ struct TimeEntry {
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct DashboardSummary {
-    running_entry: Option<TimeEntry>,
-    today_minutes: i64,
+    running_entries: Vec<TimeEntry>,
+    today_seconds: i64,
     tasks: Vec<Task>,
 }
 
@@ -91,7 +91,7 @@ struct TaskPayload {
 #[serde(rename_all = "camelCase")]
 struct ManualTimeEntryPayload {
     task_id: i64,
-    duration_minutes: i64,
+    duration_seconds: i64,
     date: Option<String>,
     note_markdown: Option<String>,
 }
@@ -188,17 +188,13 @@ fn init_database(connection: &Connection) -> CommandResult<()> {
                 task_id INTEGER NOT NULL,
                 start_time TEXT,
                 end_time TEXT,
-                duration_minutes INTEGER NOT NULL DEFAULT 0,
+                duration_seconds INTEGER NOT NULL DEFAULT 0,
                 note_markdown TEXT NOT NULL DEFAULT '',
                 entry_type TEXT NOT NULL,
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL,
                 FOREIGN KEY(task_id) REFERENCES tasks(id) ON DELETE CASCADE
             );
-
-            CREATE UNIQUE INDEX IF NOT EXISTS one_running_timer
-            ON time_entries(entry_type)
-            WHERE entry_type = 'tracked' AND end_time IS NULL;
             ",
         )
         .map_err(|error| format!("Could not initialize database: {error}"))?;
@@ -219,6 +215,28 @@ fn init_database(connection: &Connection) -> CommandResult<()> {
             )
             .map_err(|error| format!("Could not migrate users schema: {error}"))?;
     }
+
+    let has_duration_minutes = connection
+        .prepare("SELECT 1 FROM pragma_table_info('time_entries') WHERE name = 'duration_minutes'")
+        .and_then(|mut stmt| stmt.exists([]))
+        .map_err(|error| format!("Could not inspect time_entries schema: {error}"))?;
+
+    if has_duration_minutes {
+        connection
+            .execute_batch(
+                "
+                ALTER TABLE time_entries RENAME COLUMN duration_minutes TO duration_seconds;
+                UPDATE time_entries SET duration_seconds = duration_seconds * 60;
+                ",
+            )
+            .map_err(|error| {
+                format!("Could not migrate time_entries duration column: {error}")
+            })?;
+    }
+
+    connection
+        .execute_batch("DROP INDEX IF EXISTS one_running_timer;")
+        .map_err(|error| format!("Could not drop legacy timer index: {error}"))?;
 
     Ok(())
 }
@@ -244,7 +262,7 @@ fn row_to_task(row: &Row<'_>) -> rusqlite::Result<Task> {
         created_at: row.get(4)?,
         updated_at: row.get(5)?,
         completed_at: row.get(6)?,
-        total_minutes: row.get(7)?,
+        total_seconds: row.get(7)?,
         is_running: row.get::<_, i64>(8)? > 0,
     })
 }
@@ -256,7 +274,7 @@ fn row_to_time_entry(row: &Row<'_>) -> rusqlite::Result<TimeEntry> {
         task_title: row.get(2)?,
         start_time: row.get(3)?,
         end_time: row.get(4)?,
-        duration_minutes: row.get(5)?,
+        duration_seconds: row.get(5)?,
         note_markdown: row.get(6)?,
         entry_type: row.get(7)?,
         created_at: row.get(8)?,
@@ -286,7 +304,7 @@ fn fetch_task(connection: &Connection, task_id: i64, user_id: i64) -> CommandRes
                 t.created_at,
                 t.updated_at,
                 t.completed_at,
-                COALESCE(SUM(te.duration_minutes), 0) AS total_minutes,
+                COALESCE(SUM(te.duration_seconds), 0) AS total_seconds,
                 EXISTS(
                     SELECT 1 FROM time_entries running
                     WHERE running.task_id = t.id
@@ -316,7 +334,7 @@ fn fetch_tasks(connection: &Connection, user_id: i64) -> CommandResult<Vec<Task>
                 t.created_at,
                 t.updated_at,
                 t.completed_at,
-                COALESCE(SUM(te.duration_minutes), 0) AS total_minutes,
+                COALESCE(SUM(te.duration_seconds), 0) AS total_seconds,
                 EXISTS(
                     SELECT 1 FROM time_entries running
                     WHERE running.task_id = t.id
@@ -346,7 +364,42 @@ fn fetch_tasks(connection: &Connection, user_id: i64) -> CommandResult<Vec<Task>
         .map_err(|error| format!("Could not map tasks: {error}"))
 }
 
-fn fetch_running_entry(connection: &Connection, user_id: i64) -> CommandResult<Option<TimeEntry>> {
+fn fetch_running_entries(connection: &Connection, user_id: i64) -> CommandResult<Vec<TimeEntry>> {
+    let mut statement = connection
+        .prepare(
+            "
+            SELECT
+                te.id,
+                te.task_id,
+                t.title,
+                te.start_time,
+                te.end_time,
+                te.duration_seconds,
+                te.note_markdown,
+                te.entry_type,
+                te.created_at,
+                te.updated_at
+            FROM time_entries te
+            INNER JOIN tasks t ON t.id = te.task_id
+            WHERE t.user_id = ?1 AND te.entry_type = 'tracked' AND te.end_time IS NULL
+            ORDER BY te.start_time DESC
+            ",
+        )
+        .map_err(|error| format!("Could not prepare running timers query: {error}"))?;
+
+    let rows = statement
+        .query_map(params![user_id], row_to_time_entry)
+        .map_err(|error| format!("Could not fetch running timers: {error}"))?;
+
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|error| format!("Could not map running timers: {error}"))
+}
+
+fn fetch_running_entry_for_task(
+    connection: &Connection,
+    user_id: i64,
+    task_id: i64,
+) -> CommandResult<Option<TimeEntry>> {
     connection
         .query_row(
             "
@@ -356,21 +409,24 @@ fn fetch_running_entry(connection: &Connection, user_id: i64) -> CommandResult<O
                 t.title,
                 te.start_time,
                 te.end_time,
-                te.duration_minutes,
+                te.duration_seconds,
                 te.note_markdown,
                 te.entry_type,
                 te.created_at,
                 te.updated_at
             FROM time_entries te
             INNER JOIN tasks t ON t.id = te.task_id
-            WHERE t.user_id = ?1 AND te.entry_type = 'tracked' AND te.end_time IS NULL
+            WHERE t.user_id = ?1
+              AND te.task_id = ?2
+              AND te.entry_type = 'tracked'
+              AND te.end_time IS NULL
             LIMIT 1
             ",
-            params![user_id],
+            params![user_id, task_id],
             row_to_time_entry,
         )
         .optional()
-        .map_err(|error| format!("Could not fetch running timer: {error}"))
+        .map_err(|error| format!("Could not fetch running timer for task: {error}"))
 }
 
 #[tauri::command]
@@ -614,8 +670,8 @@ fn start_timer(task_id: i64, state: State<AppState>) -> CommandResult<TimeEntry>
     let user_id = get_current_user_id(&state)?;
     let connection = get_connection(&state)?;
 
-    if fetch_running_entry(&connection, user_id)?.is_some() {
-        return Err("A timer is already running".to_string());
+    if fetch_running_entry_for_task(&connection, user_id, task_id)?.is_some() {
+        return Err("A timer for this task is already running".to_string());
     }
 
     fetch_task(&connection, task_id, user_id)?;
@@ -625,7 +681,7 @@ fn start_timer(task_id: i64, state: State<AppState>) -> CommandResult<TimeEntry>
         .execute(
             "
             INSERT INTO time_entries
-                (task_id, start_time, end_time, duration_minutes, note_markdown, entry_type, created_at, updated_at)
+                (task_id, start_time, end_time, duration_seconds, note_markdown, entry_type, created_at, updated_at)
             VALUES (?1, ?2, NULL, 0, '', 'tracked', ?2, ?2)
             ",
             params![task_id, now],
@@ -639,15 +695,16 @@ fn start_timer(task_id: i64, state: State<AppState>) -> CommandResult<TimeEntry>
         )
         .map_err(|error| format!("Could not update task status: {error}"))?;
 
-    fetch_running_entry(&connection, user_id)?.ok_or_else(|| "Could not start timer".to_string())
+    fetch_running_entry_for_task(&connection, user_id, task_id)?
+        .ok_or_else(|| "Could not start timer".to_string())
 }
 
 #[tauri::command]
-fn stop_timer(state: State<AppState>) -> CommandResult<TimeEntry> {
+fn stop_timer(task_id: i64, state: State<AppState>) -> CommandResult<TimeEntry> {
     let user_id = get_current_user_id(&state)?;
     let connection = get_connection(&state)?;
-    let entry = fetch_running_entry(&connection, user_id)?
-        .ok_or_else(|| "No running timer found".to_string())?;
+    let entry = fetch_running_entry_for_task(&connection, user_id, task_id)?
+        .ok_or_else(|| "No running timer found for this task".to_string())?;
     let start_time = entry
         .start_time
         .as_deref()
@@ -656,17 +713,17 @@ fn stop_timer(state: State<AppState>) -> CommandResult<TimeEntry> {
         .map_err(|_| "Invalid timer start time".to_string())?
         .with_timezone(&Utc);
     let stopped_at = Utc::now();
-    let duration_minutes = (stopped_at - started_at).num_minutes().max(1);
+    let duration_seconds = (stopped_at - started_at).num_seconds().max(0);
     let stopped_at_string = stopped_at.to_rfc3339();
 
     connection
         .execute(
             "
             UPDATE time_entries
-            SET end_time = ?1, duration_minutes = ?2, updated_at = ?1
+            SET end_time = ?1, duration_seconds = ?2, updated_at = ?1
             WHERE id = ?3
             ",
-            params![stopped_at_string, duration_minutes, entry.id],
+            params![stopped_at_string, duration_seconds, entry.id],
         )
         .map_err(|error| format!("Could not stop timer: {error}"))?;
 
@@ -679,7 +736,7 @@ fn stop_timer(state: State<AppState>) -> CommandResult<TimeEntry> {
                 t.title,
                 te.start_time,
                 te.end_time,
-                te.duration_minutes,
+                te.duration_seconds,
                 te.note_markdown,
                 te.entry_type,
                 te.created_at,
@@ -695,11 +752,11 @@ fn stop_timer(state: State<AppState>) -> CommandResult<TimeEntry> {
 }
 
 #[tauri::command]
-fn get_running_entry(state: State<AppState>) -> CommandResult<Option<TimeEntry>> {
+fn get_running_entries(state: State<AppState>) -> CommandResult<Vec<TimeEntry>> {
     let user_id = get_current_user_id(&state)?;
     let connection = get_connection(&state)?;
 
-    fetch_running_entry(&connection, user_id)
+    fetch_running_entries(&connection, user_id)
 }
 
 #[tauri::command]
@@ -709,7 +766,7 @@ fn create_manual_time_entry(
 ) -> CommandResult<TimeEntry> {
     let user_id = get_current_user_id(&state)?;
 
-    if payload.duration_minutes <= 0 {
+    if payload.duration_seconds <= 0 {
         return Err("Duration must be greater than zero".to_string());
     }
 
@@ -723,10 +780,10 @@ fn create_manual_time_entry(
         .execute(
             "
             INSERT INTO time_entries
-                (task_id, start_time, end_time, duration_minutes, note_markdown, entry_type, created_at, updated_at)
+                (task_id, start_time, end_time, duration_seconds, note_markdown, entry_type, created_at, updated_at)
             VALUES (?1, ?2, ?2, ?3, ?4, 'manual', ?5, ?5)
             ",
-            params![payload.task_id, start_time, payload.duration_minutes, note, now],
+            params![payload.task_id, start_time, payload.duration_seconds, note, now],
         )
         .map_err(|error| format!("Could not create manual time entry: {error}"))?;
 
@@ -740,7 +797,7 @@ fn create_manual_time_entry(
                 t.title,
                 te.start_time,
                 te.end_time,
-                te.duration_minutes,
+                te.duration_seconds,
                 te.note_markdown,
                 te.entry_type,
                 te.created_at,
@@ -772,7 +829,7 @@ fn list_time_entries(
                 t.title,
                 te.start_time,
                 te.end_time,
-                te.duration_minutes,
+                te.duration_seconds,
                 te.note_markdown,
                 te.entry_type,
                 te.created_at,
@@ -793,7 +850,7 @@ fn list_time_entries(
                 t.title,
                 te.start_time,
                 te.end_time,
-                te.duration_minutes,
+                te.duration_seconds,
                 te.note_markdown,
                 te.entry_type,
                 te.created_at,
@@ -828,10 +885,10 @@ fn dashboard_summary(state: State<AppState>) -> CommandResult<DashboardSummary> 
     let user_id = get_current_user_id(&state)?;
     let connection = get_connection(&state)?;
     let today_prefix = Utc::now().format("%Y-%m-%d").to_string();
-    let today_minutes: i64 = connection
+    let today_seconds: i64 = connection
         .query_row(
             "
-            SELECT COALESCE(SUM(te.duration_minutes), 0)
+            SELECT COALESCE(SUM(te.duration_seconds), 0)
             FROM time_entries te
             INNER JOIN tasks t ON t.id = te.task_id
             WHERE t.user_id = ?1 AND te.start_time LIKE ?2
@@ -842,8 +899,8 @@ fn dashboard_summary(state: State<AppState>) -> CommandResult<DashboardSummary> 
         .map_err(|error| format!("Could not calculate today total: {error}"))?;
 
     Ok(DashboardSummary {
-        running_entry: fetch_running_entry(&connection, user_id)?,
-        today_minutes,
+        running_entries: fetch_running_entries(&connection, user_id)?,
+        today_seconds,
         tasks: fetch_tasks(&connection, user_id)?,
     })
 }
@@ -905,7 +962,7 @@ pub fn run() {
             complete_task,
             start_timer,
             stop_timer,
-            get_running_entry,
+            get_running_entries,
             create_manual_time_entry,
             list_time_entries,
             dashboard_summary,

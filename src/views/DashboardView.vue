@@ -2,13 +2,15 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { LayoutDashboard } from 'lucide-vue-next'
+import NxrFilterBar from '@/components/NxrFilterBar.vue'
 import TaskList from '@/components/tasks/TaskList.vue'
 import TimerCard from '@/components/timer/TimerCard.vue'
 import { getDashboardSummary } from '@/services/task.service'
 import { useTasksStore } from '@/stores/tasks'
 import { useTimerStore } from '@/stores/timer'
 import type { DashboardSummary } from '@/types/dashboard.type'
-import { formatMinutes } from '@/utils/time'
+import { formatDuration } from '@/utils/time'
+import { useTaskFilter } from '@/utils/useTaskFilter'
 
 const { t } = useI18n()
 const tasksStore = useTasksStore()
@@ -16,11 +18,33 @@ const timerStore = useTimerStore()
 
 const summary = ref<DashboardSummary | null>(null)
 
-const todayTotal = computed(() => formatMinutes(summary.value?.todayMinutes ?? 0))
+const { searchQuery, sortField, sortOrder, filteredAndSorted } = useTaskFilter(
+  () => tasksStore.tasks,
+  { initialSortField: 'createdAt', initialSortOrder: 'desc' }
+)
+
+const sortFields = computed(() => [
+  { value: 'title', label: t('filter.fields.title') },
+  { value: 'createdAt', label: t('filter.fields.createdAt') },
+  { value: 'status', label: t('filter.fields.status') },
+  { value: 'totalSeconds', label: t('filter.fields.totalTime') }
+])
+
+const todayTotal = computed(() => formatDuration(summary.value?.todaySeconds ?? 0))
+
+const filteredTodo = computed(() =>
+  filteredAndSorted.value.filter((task) => task.status === 'todo')
+)
+const filteredInProgress = computed(() =>
+  filteredAndSorted.value.filter((task) => task.status === 'in_progress')
+)
+const filteredDone = computed(() =>
+  filteredAndSorted.value.filter((task) => task.status === 'done')
+)
 
 const loadDashboard = async () => {
   summary.value = await getDashboardSummary()
-  await timerStore.loadRunningEntry()
+  await timerStore.loadRunningEntries()
   await tasksStore.loadTasks()
 }
 
@@ -43,9 +67,8 @@ onMounted(() => {
 
     <div class="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
       <TimerCard
-        :running-entry="timerStore.runningEntry"
-        :elapsed-label="timerStore.elapsedLabel"
-        @stop="timerStore.stopTimer"
+        :running-entries="timerStore.runningEntries"
+        :total-elapsed-label="timerStore.totalElapsedLabel"
       />
 
       <section
@@ -58,10 +81,17 @@ onMounted(() => {
       </section>
     </div>
 
+    <NxrFilterBar
+      v-model:search="searchQuery"
+      v-model:sort-field="sortField"
+      v-model:sort-order="sortOrder"
+      :sort-fields="sortFields"
+    />
+
     <div class="grid gap-6 xl:grid-cols-3">
       <TaskList
         :title="t('status.todo')"
-        :tasks="tasksStore.todoTasks"
+        :tasks="filteredTodo"
         :empty-text="t('tasks.empty')"
         @start="timerStore.startTimer"
         @stop="timerStore.stopTimer"
@@ -70,7 +100,7 @@ onMounted(() => {
       />
       <TaskList
         :title="t('status.in_progress')"
-        :tasks="tasksStore.inProgressTasks"
+        :tasks="filteredInProgress"
         :empty-text="t('tasks.empty')"
         @start="timerStore.startTimer"
         @stop="timerStore.stopTimer"
@@ -79,9 +109,10 @@ onMounted(() => {
       />
       <TaskList
         :title="t('status.done')"
-        :tasks="tasksStore.doneTasks"
+        :tasks="filteredDone"
         :empty-text="t('tasks.empty')"
         is-readonly
+        @delete="tasksStore.deleteTask"
       />
     </div>
   </div>

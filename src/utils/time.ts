@@ -1,12 +1,20 @@
-export const formatMinutes = (minutes: number) => {
-  const hours = Math.floor(minutes / 60)
-  const remainingMinutes = minutes % 60
+export const formatDuration = (seconds: number) => {
+  const safeSeconds = Math.max(0, Math.floor(seconds))
+  const hours = Math.floor(safeSeconds / 3600)
+  const minutes = Math.floor((safeSeconds % 3600) / 60)
+  const remainingSeconds = safeSeconds % 60
 
-  if (hours === 0) {
-    return `${remainingMinutes}m`
+  if (hours > 0) {
+    return `${hours}h ${minutes.toString().padStart(2, '0')}m ${remainingSeconds
+      .toString()
+      .padStart(2, '0')}s`
   }
 
-  return `${hours}h ${remainingMinutes.toString().padStart(2, '0')}m`
+  if (minutes > 0) {
+    return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`
+  }
+
+  return `${remainingSeconds}s`
 }
 
 export const formatDate = (value?: string | null) => {
@@ -29,9 +37,10 @@ export const getElapsedSeconds = (startTime?: string | null) => {
 }
 
 export const formatSeconds = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const remainingSeconds = seconds % 60
+  const safeSeconds = Math.max(0, Math.floor(seconds))
+  const hours = Math.floor(safeSeconds / 3600)
+  const minutes = Math.floor((safeSeconds % 3600) / 60)
+  const remainingSeconds = safeSeconds % 60
 
   return [hours, minutes, remainingSeconds]
     .map((part) => part.toString().padStart(2, '0'))
