@@ -42,9 +42,9 @@ Mellow ist ein lokaler Desktop-Zeittracker für Aufgaben, Arbeitssessions und Ma
 
 ## Voraussetzungen
 
-- Node.js und npm
-- Rust mit `cargo` (für Tauri)
-- Tauri-Systemabhängigkeiten für dein Betriebssystem
+- **Node.js 20+** und **npm**
+- **Rust mit `cargo`** (für Tauri 2)
+- **Plattform-Toolchain** für native Builds (siehe unten)
 
 Prüfen, ob `cargo` verfügbar ist:
 
@@ -52,17 +52,27 @@ Prüfen, ob `cargo` verfügbar ist:
 cargo --version
 ```
 
-Falls nicht im Pfad, einmalig laden:
+### Windows
+
+- [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) mit Workload **„Desktop development with C++"** (für den MSVC-Linker)
+- [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) (auf Windows 11 vorinstalliert)
+
+```powershell
+winget install Rustlang.Rustup
+winget install Microsoft.VisualStudio.2022.BuildTools
+```
+
+### macOS / Linux
 
 ```bash
+# Rust installieren, falls noch nicht vorhanden
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# falls cargo nach Installation nicht im Pfad ist:
 source "$HOME/.cargo/env"
 ```
 
-Damit das dauerhaft gilt:
-
-```bash
-echo 'source "$HOME/.cargo/env"' >> ~/.zshrc
-```
+Auf Linux zusätzlich die [Tauri-Prerequisites](https://v2.tauri.app/start/prerequisites/) (webkit2gtk, libssl, etc.).
 
 ## Installation
 
@@ -104,11 +114,45 @@ Frontend bauen:
 npm run build
 ```
 
-Desktop-App bauen:
+### Desktop-App bauen
+
+Alle Installer-Targets (auf Windows: NSIS + MSI):
 
 ```bash
 npm run tauri:build
 ```
+
+Nur NSIS-Installer (schneller, kleiner):
+
+```bash
+npm run tauri:build:nsis
+```
+
+Nur MSI-Installer:
+
+```bash
+npm run tauri:build:msi
+```
+
+Debug-Build (schneller, größer, mit DevTools + Konsolen-Output):
+
+```bash
+npm run tauri:build:debug
+```
+
+### Wo die Build-Artefakte landen
+
+| Datei | Pfad |
+| --- | --- |
+| Standalone-Executable (Windows) | `src-tauri/target/release/mellow.exe` |
+| NSIS-Installer (Windows) | `src-tauri/target/release/bundle/nsis/Mellow_<version>_x64-setup.exe` |
+| MSI-Installer (Windows) | `src-tauri/target/release/bundle/msi/Mellow_<version>_x64_en-US.msi` |
+| App-Bundle (macOS) | `src-tauri/target/release/bundle/macos/Mellow.app` |
+| DMG (macOS) | `src-tauri/target/release/bundle/dmg/Mellow_<version>_x64.dmg` |
+| AppImage (Linux) | `src-tauri/target/release/bundle/appimage/mellow_<version>_amd64.AppImage` |
+| Debian-Paket (Linux) | `src-tauri/target/release/bundle/deb/mellow_<version>_amd64.deb` |
+
+Bei Release-Builds wird auf Windows kein Konsolenfenster geöffnet (`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]` in [`src-tauri/src/main.rs`](src-tauri/src/main.rs)). Im Debug-Build bleibt die Konsole erhalten, damit `println!` und Tauri-Logs sichtbar sind.
 
 ## Projektstruktur
 

@@ -13,7 +13,10 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "vue-tsc --noEmit",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "tauri:build:nsis": "tauri build --bundles nsis",
+    "tauri:build:msi": "tauri build --bundles msi",
+    "tauri:build:debug": "tauri build --debug --bundles nsis"
   },
   "repository": {
     "type": "git",
