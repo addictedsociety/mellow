@@ -113,6 +113,7 @@ watchEffect(() => {
             <SelectContent>
               <SelectItem value="todo">{{ t('status.todo') }}</SelectItem>
               <SelectItem value="in_progress">{{ t('status.in_progress') }}</SelectItem>
+              <SelectItem value="blocked">{{ t('status.blocked') }}</SelectItem>
               <SelectItem value="done">{{ t('status.done') }}</SelectItem>
             </SelectContent>
           </Select>

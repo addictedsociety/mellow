@@ -7,6 +7,7 @@
     "dashboard": "Dashboard",
     "tasks": "Aufgaben",
     "completed": "Erledigt",
+    "pomodoro": "Pomodoro",
     "settings": "Einstellungen",
     "logout": "Abmelden"
   },
@@ -54,8 +55,22 @@
   "status": {
     "todo": "Todo",
     "in_progress": "In Arbeit",
+    "blocked": "Blockiert",
     "done": "Erledigt",
     "tracking": "Wird getrackt"
+  },
+  "filter": {
+    "search": "Suchen...",
+    "sortBy": "Sortieren nach",
+    "sortOrder": "Reihenfolge",
+    "ascending": "Aufsteigend",
+    "descending": "Absteigend",
+    "fields": {
+      "title": "Titel",
+      "createdAt": "Erstellt",
+      "status": "Status",
+      "totalMinutes": "Erfasste Minuten"
+    }
   },
   "timeEntries": {
     "title": "Zeiteinträge",
@@ -71,6 +86,38 @@
     "edit": "Schreiben",
     "preview": "Vorschau",
     "placeholder": "Markdown-Notizen..."
+  },
+  "pomodoro": {
+    "title": "Pomodoro",
+    "subtitle": "Fokussiere dich in kurzen Intervallen.",
+    "start": "Start",
+    "pause": "Pause",
+    "reset": "Zurücksetzen",
+    "skip": "Überspringen",
+    "modes": {
+      "focus": "Pomodoro",
+      "shortBreak": "Kurze Pause",
+      "longBreak": "Lange Pause"
+    },
+    "status": {
+      "focus": "Zeit zum Fokussieren!",
+      "shortBreak": "Kurz durchatmen.",
+      "longBreak": "Gönn dir eine längere Pause."
+    },
+    "confirmReset": {
+      "title": "Timer zurücksetzen?",
+      "description": "Der laufende Timer wird auf die volle Dauer zurückgesetzt."
+    },
+    "confirmSkip": {
+      "title": "Phase überspringen?",
+      "description": "Du springst direkt zur nächsten Phase weiter."
+    },
+    "confirmModeChange": {
+      "title": "Zu „{mode}\" wechseln?",
+      "description": "Der laufende Timer wird verworfen und auf die volle Dauer der gewählten Phase gesetzt.",
+      "confirm": "Wechseln"
+    },
+    "session": "Focussed Sessions"
   },
   "settings": {
     "title": "Einstellungen",

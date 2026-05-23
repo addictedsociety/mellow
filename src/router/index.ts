@@ -6,6 +6,7 @@ const DashboardView = () => import('@/views/DashboardView.vue')
 const TasksView = () => import('@/views/TasksView.vue')
 const TaskDetailView = () => import('@/views/TaskDetailView.vue')
 const CompletedTasksView = () => import('@/views/CompletedTasksView.vue')
+const PomodoroView = () => import('@/views/PomodoroView.vue')
 const SettingsView = () => import('@/views/SettingsView.vue')
 
 export const router = createRouter({
@@ -37,6 +38,11 @@ export const router = createRouter({
       path: '/completed',
       name: 'completed',
       component: CompletedTasksView
+    },
+    {
+      path: '/pomodoro',
+      name: 'pomodoro',
+      component: PomodoroView
     },
     {
       path: '/settings',

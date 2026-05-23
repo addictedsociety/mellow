@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue'
-import TaskList from '@/components/tasks/TaskList.vue'
-import ManualTimeEntryDialog from '@/components/timer/ManualTimeEntryDialog.vue'
-import TimeEntryList from '@/components/timer/TimeEntryList.vue'
-import { createManualTimeEntry, listTimeEntries } from '@/services/time-entry.service'
-import { useTasksStore } from '@/stores/tasks'
-import { useTimerStore } from '@/stores/timer'
-import type { TaskStatus } from '@/types/task.type'
-import type { ManualTimeEntryPayload, TimeEntry } from '@/types/time-entry.type'
 import { ListTodo } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import MarkdownEditor from '@/components/markdown/MarkdownEditor.vue'
+import TaskList from '@/components/tasks/TaskList.vue'
+import TimeEntryList from '@/components/timer/TimeEntryList.vue'
+import VeFilterBar from '@/components/VeFilterBar.vue'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -19,7 +15,12 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
+import { listTimeEntries } from '@/services/time-entry.service'
+import { useTasksStore } from '@/stores/tasks'
+import { useTimerStore } from '@/stores/timer'
+import type { TaskStatus } from '@/types/task.type'
+import type { TimeEntry } from '@/types/time-entry.type'
+import { useTaskFilter } from '@/utils/useTaskFilter'
 
 const { t } = useI18n()
 const tasksStore = useTasksStore()
@@ -30,9 +31,16 @@ const descriptionMarkdown = ref('')
 const status = ref<TaskStatus>('todo')
 const entries = ref<TimeEntry[]>([])
 
-const groupedTasks = computed(() => [
-  { title: t('status.todo'), tasks: tasksStore.todoTasks },
-  { title: t('status.in_progress'), tasks: tasksStore.inProgressTasks }
+const { searchQuery, sortField, sortOrder, filteredAndSorted } = useTaskFilter(
+  () => tasksStore.activeTasks,
+  { initialSortField: 'status', initialSortOrder: 'asc' }
+)
+
+const sortFields = computed(() => [
+  { value: 'title', label: t('filter.fields.title') },
+  { value: 'createdAt', label: t('filter.fields.createdAt') },
+  { value: 'status', label: t('filter.fields.status') },
+  { value: 'totalMinutes', label: t('filter.fields.totalMinutes') }
 ])
 
 const resetForm = () => {
@@ -48,12 +56,6 @@ const submitTask = async () => {
     status: status.value
   })
   resetForm()
-}
-
-const addManualEntry = async (payload: ManualTimeEntryPayload) => {
-  await createManualTimeEntry(payload)
-  entries.value = await listTimeEntries()
-  await tasksStore.loadTasks()
 }
 
 onMounted(async () => {
@@ -101,6 +103,7 @@ onMounted(async () => {
             <SelectContent>
               <SelectItem value="todo">{{ t('status.todo') }}</SelectItem>
               <SelectItem value="in_progress">{{ t('status.in_progress') }}</SelectItem>
+              <SelectItem value="blocked">{{ t('status.blocked') }}</SelectItem>
             </SelectContent>
           </Select>
         </label>
@@ -114,8 +117,6 @@ onMounted(async () => {
           {{ t('tasks.create') }}
         </Button>
       </form>
-
-      <ManualTimeEntryDialog :tasks="tasksStore.tasks" @save="addManualEntry" />
     </aside>
 
     <section class="space-y-6">
@@ -126,19 +127,22 @@ onMounted(async () => {
         {{ timerStore.error }}
       </p>
 
-      <div class="grid gap-6 xl:grid-cols-2">
-        <TaskList
-          v-for="group in groupedTasks"
-          :key="group.title"
-          :title="group.title"
-          :tasks="group.tasks"
-          :empty-text="t('tasks.empty')"
-          @start="timerStore.startTimer"
-          @stop="timerStore.stopTimer"
-          @complete="tasksStore.completeTask"
-          @delete="tasksStore.deleteTask"
-        />
-      </div>
+      <VeFilterBar
+        v-model:search="searchQuery"
+        v-model:sort-field="sortField"
+        v-model:sort-order="sortOrder"
+        :sort-fields="sortFields"
+      />
+
+      <TaskList
+        :title="t('tasks.title')"
+        :tasks="filteredAndSorted"
+        :empty-text="t('tasks.empty')"
+        @start="timerStore.startTimer"
+        @stop="timerStore.stopTimer"
+        @complete="tasksStore.completeTask"
+        @delete="tasksStore.deleteTask"
+      />
 
       <TimeEntryList :entries="entries" />
     </section>

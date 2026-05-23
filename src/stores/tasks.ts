@@ -16,7 +16,9 @@ export const useTasksStore = defineStore('tasks', () => {
 
   const todoTasks = computed(() => filterByStatus('todo'))
   const inProgressTasks = computed(() => filterByStatus('in_progress'))
+  const blockedTasks = computed(() => filterByStatus('blocked'))
   const doneTasks = computed(() => filterByStatus('done'))
+  const activeTasks = computed(() => tasks.value.filter((task) => task.status !== 'done'))
 
   const filterByStatus = (status: TaskStatus) =>
     tasks.value.filter((task) => task.status === status)
@@ -61,7 +63,9 @@ export const useTasksStore = defineStore('tasks', () => {
     tasks,
     todoTasks,
     inProgressTasks,
+    blockedTasks,
     doneTasks,
+    activeTasks,
     isLoading,
     error,
     loadTasks,

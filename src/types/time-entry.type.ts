@@ -12,10 +12,3 @@ export interface TimeEntry {
   createdAt: string
   updatedAt: string
 }
-
-export interface ManualTimeEntryPayload {
-  taskId: number
-  durationMinutes: number
-  date?: string
-  noteMarkdown?: string
-}

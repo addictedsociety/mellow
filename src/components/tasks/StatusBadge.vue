@@ -19,6 +19,7 @@ const classes = computed(() => {
   return {
     todo: 'bg-muted text-muted-foreground ring-border',
     in_progress: 'bg-accent text-accent-foreground ring-accent',
+    blocked: 'bg-amber-500/15 text-amber-600 ring-amber-500/40 dark:text-amber-400',
     done: 'bg-secondary text-secondary-foreground ring-border'
   }[status]
 })

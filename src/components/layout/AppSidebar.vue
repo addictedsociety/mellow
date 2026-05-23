@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { CheckCircle2, LayoutDashboard, ListTodo, LogOut, Settings } from 'lucide-vue-next'
+import {
+  CheckCircle2,
+  LayoutDashboard,
+  ListTodo,
+  LogOut,
+  Settings,
+  ClockFading
+} from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import mellowLogo from '@/assets/mellow_logo.png'
@@ -29,6 +36,7 @@ const links = [
   { name: 'dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
   { name: 'tasks', label: 'nav.tasks', icon: ListTodo },
   { name: 'completed', label: 'nav.completed', icon: CheckCircle2 },
+  { name: 'pomodoro', label: 'nav.pomodoro', icon: ClockFading },
   { name: 'settings', label: 'nav.settings', icon: Settings }
 ]
 </script>

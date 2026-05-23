@@ -32,7 +32,7 @@ const preview = computed(() => task.descriptionMarkdown.slice(0, 180))
     <div class="flex items-start justify-between gap-4">
       <div>
         <RouterLink
-          class="text-foreground hover:text-primary text-lg font-semibold transition"
+          class="text-foreground hover:text-primary text-lg font-semibold underline underline-offset-4 transition"
           :to="{ name: 'task-detail', params: { id: task.id } }"
         >
           {{ task.title }}

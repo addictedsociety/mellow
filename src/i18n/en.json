@@ -7,6 +7,7 @@
     "dashboard": "Dashboard",
     "tasks": "Tasks",
     "completed": "Completed",
+    "pomodoro": "Pomodoro",
     "settings": "Settings",
     "logout": "Log out"
   },
@@ -54,8 +55,22 @@
   "status": {
     "todo": "Todo",
     "in_progress": "In progress",
+    "blocked": "Blocked",
     "done": "Done",
     "tracking": "Tracking"
+  },
+  "filter": {
+    "search": "Search...",
+    "sortBy": "Sort by",
+    "sortOrder": "Order",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "fields": {
+      "title": "Title",
+      "createdAt": "Created",
+      "status": "Status",
+      "totalMinutes": "Tracked minutes"
+    }
   },
   "timeEntries": {
     "title": "Time entries",
@@ -71,6 +86,38 @@
     "edit": "Write",
     "preview": "Preview",
     "placeholder": "Markdown notes..."
+  },
+  "pomodoro": {
+    "title": "Pomodoro",
+    "subtitle": "Focus in short intervals.",
+    "start": "Start",
+    "pause": "Pause",
+    "reset": "Reset",
+    "skip": "Skip",
+    "modes": {
+      "focus": "Pomodoro",
+      "shortBreak": "Short Break",
+      "longBreak": "Long Break"
+    },
+    "status": {
+      "focus": "Time to focus!",
+      "shortBreak": "Take a short breather.",
+      "longBreak": "Enjoy a longer break."
+    },
+    "confirmReset": {
+      "title": "Reset timer?",
+      "description": "The current timer will be reset to its full duration."
+    },
+    "confirmSkip": {
+      "title": "Skip this phase?",
+      "description": "You will jump straight to the next phase."
+    },
+    "confirmModeChange": {
+      "title": "Switch to \"{mode}\"?",
+      "description": "The current timer will be discarded and reset to the full duration of the selected phase.",
+      "confirm": "Switch"
+    },
+    "session": "Focused sessions"
   },
   "settings": {
     "title": "Settings",

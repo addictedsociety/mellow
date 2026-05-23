@@ -2,10 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 
-const {
-  intensity = 1,
-  particleCount = 90
-} = defineProps<{
+const { intensity = 1, particleCount = 90 } = defineProps<{
   intensity?: number
   particleCount?: number
 }>()
@@ -33,7 +30,11 @@ const cssColorToVec3 = (cssVar: string, fallback: [number, number, number]): THR
   const match = rgb.match(/rgba?\(([^)]+)\)/)
   if (!match) return new THREE.Vector3(...fallback)
   const parts = match[1].split(',').map((v) => parseFloat(v.trim()) / 255)
-  return new THREE.Vector3(parts[0] ?? fallback[0], parts[1] ?? fallback[1], parts[2] ?? fallback[2])
+  return new THREE.Vector3(
+    parts[0] ?? fallback[0],
+    parts[1] ?? fallback[1],
+    parts[2] ?? fallback[2]
+  )
 }
 
 const readThemeColors = () => {
@@ -108,7 +109,7 @@ const auroraFragment = /* glsl */ `
     vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
     vec2 p = (uv - 0.5) * aspect;
 
-    float t = uTime * 0.06;
+    float t = uTime * 0.02;
 
     vec2 pointerOffset = (uPointer - 0.5) * 0.15;
     p += pointerOffset;
@@ -273,10 +274,7 @@ onMounted(() => {
     uniforms: {
       uTime: { value: 0 },
       uResolution: {
-        value: new THREE.Vector2(
-          containerRef.value.clientWidth,
-          containerRef.value.clientHeight
-        )
+        value: new THREE.Vector2(containerRef.value.clientWidth, containerRef.value.clientHeight)
       },
       uPointer: { value: new THREE.Vector2(0.5, 0.5) },
       uIntensity: { value: intensity },
@@ -346,9 +344,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div
-    ref="containerRef"
-    class="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-    aria-hidden="true"
-  />
+  <div ref="containerRef" class="pointer-events-none absolute inset-0 z-0" aria-hidden="true" />
 </template>
