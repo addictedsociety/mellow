@@ -129,6 +129,8 @@
       "confirm": "Wechseln"
     },
     "session": "Focussed Sessions",
+    "todayFocused": "Heute fokussiert",
+    "todayFocusedHint": "Aktiv im Fokus-Modus verbrachte Zeit heute. Setzt sich täglich zurück.",
     "settings": {
       "title": "Pomodoro-Einstellungen",
       "description": "Lege die Dauer der einzelnen Phasen in Minuten fest.",

@@ -129,6 +129,8 @@
       "confirm": "Switch"
     },
     "session": "Focused sessions",
+    "todayFocused": "Focused today",
+    "todayFocusedHint": "Time spent in focus mode today. Resets every day.",
     "settings": {
       "title": "Pomodoro settings",
       "description": "Set the duration of each phase in minutes.",

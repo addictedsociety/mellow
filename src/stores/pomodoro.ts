@@ -12,6 +12,16 @@ const DEFAULT_DURATIONS: Record<PomodoroMode, number> = {
 
 const SESSIONS_UNTIL_LONG_BREAK = 4
 const DURATIONS_STORAGE_KEY = 'mellow:pomodoro:durations'
+const TODAY_FOCUS_SECONDS_KEY = 'mellow:pomodoro:todayFocusSeconds'
+const TODAY_DATE_KEY = 'mellow:pomodoro:todayDate'
+
+const getTodayKey = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = (now.getMonth() + 1).toString().padStart(2, '0')
+  const day = now.getDate().toString().padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 export const usePomodoroStore = defineStore('pomodoro', () => {
   const durations = useLocalStorage<Record<PomodoroMode, number>>(
@@ -19,6 +29,8 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     { ...DEFAULT_DURATIONS },
     { mergeDefaults: true }
   )
+  const todayFocusSeconds = useLocalStorage<number>(TODAY_FOCUS_SECONDS_KEY, 0)
+  const todayDate = useLocalStorage<string>(TODAY_DATE_KEY, '')
 
   const mode = ref<PomodoroMode>('focus')
   const remainingSeconds = ref(durations.value.focus)
@@ -26,6 +38,16 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
   const completedFocusSessions = ref(0)
 
   let intervalId: number | undefined
+
+  const ensureToday = () => {
+    const today = getTodayKey()
+    if (todayDate.value !== today) {
+      todayDate.value = today
+      todayFocusSeconds.value = 0
+    }
+  }
+
+  ensureToday()
 
   const totalSeconds = computed(() => durations.value[mode.value])
   const progress = computed(() =>
@@ -38,6 +60,20 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
   )
   const secondsLabel = computed(() => (remainingSeconds.value % 60).toString().padStart(2, '0'))
   const timeLabel = computed(() => `${minutesLabel.value}:${secondsLabel.value}`)
+  const todayFocusLabel = computed(() => {
+    const total = todayFocusSeconds.value
+    const hours = Math.floor(total / 3600)
+    const minutes = Math.floor((total % 3600) / 60)
+    const seconds = total % 60
+
+    if (hours > 0) {
+      return `${hours}h ${minutes.toString().padStart(2, '0')}m`
+    }
+    if (minutes > 0) {
+      return `${minutes}m`
+    }
+    return `${seconds}s`
+  })
 
   const stopTicker = () => {
     window.clearInterval(intervalId)
@@ -64,6 +100,11 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
   }
 
   const tick = () => {
+    if (mode.value === 'focus') {
+      ensureToday()
+      todayFocusSeconds.value += 1
+    }
+
     if (remainingSeconds.value <= 1) {
       remainingSeconds.value = 0
       handleCompletion()
@@ -154,17 +195,20 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     isRunning,
     completedFocusSessions,
     durations,
+    todayFocusSeconds,
     totalSeconds,
     progress,
     minutesLabel,
     secondsLabel,
     timeLabel,
+    todayFocusLabel,
     start,
     pause,
     toggle,
     reset,
     setMode,
     skipForward,
-    updateDurations
+    updateDurations,
+    ensureToday
   }
 })

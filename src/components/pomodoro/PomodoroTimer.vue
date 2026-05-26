@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  Clock,
   Coffee,
   Flame,
   Pause,
@@ -10,7 +11,7 @@ import {
   Sparkles
 } from 'lucide-vue-next'
 import type { FunctionalComponent } from 'vue'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NxrConfirmDialog from '@/components/NxrConfirmDialog.vue'
 import PomodoroSettingsDialog from '@/components/pomodoro/PomodoroSettingsDialog.vue'
@@ -125,6 +126,10 @@ const handleSkipRequest = () => {
 const handleSkipConfirm = () => {
   pomodoroStore.skipForward()
 }
+
+onMounted(() => {
+  pomodoroStore.ensureToday()
+})
 </script>
 
 <template>
@@ -132,6 +137,20 @@ const handleSkipConfirm = () => {
     <Card
       class="bg-card/60 border-border/40 relative w-full rounded-3xl shadow-xl backdrop-blur-xl"
     >
+      <div
+        class="bg-muted/60 ring-border/40 text-muted-foreground absolute top-4 left-4 flex items-center gap-2 rounded-full px-3 py-1.5 text-xs ring-1 backdrop-blur-md select-none"
+        :title="t('pomodoro.todayFocusedHint')"
+      >
+        <div class="flex items-start gap-2">
+          <Clock class="size-3.5" />
+          <div class="flex flex-row gap-2">
+            {{ t('pomodoro.todayFocused') }}:
+            <span class="text-foreground tabular-num font-semibold">{{
+              pomodoroStore.todayFocusLabel
+            }}</span>
+          </div>
+        </div>
+      </div>
       <Button
         size="icon"
         variant="ghost"
