@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  ChartColumn,
   Clock,
   Coffee,
   Flame,
@@ -15,6 +16,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NxrConfirmDialog from '@/components/NxrConfirmDialog.vue'
 import PomodoroSettingsDialog from '@/components/pomodoro/PomodoroSettingsDialog.vue'
+import PomodoroStatsDialog from '@/components/pomodoro/PomodoroStatsDialog.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { usePomodoroStore, type PomodoroMode } from '@/stores/pomodoro'
@@ -59,6 +61,7 @@ const isResetDialogOpen = ref(false)
 const isSkipDialogOpen = ref(false)
 const isModeChangeDialogOpen = ref(false)
 const isSettingsDialogOpen = ref(false)
+const isStatsDialogOpen = ref(false)
 const pendingMode = ref<PomodoroMode | null>(null)
 
 const modes = computed<{ key: PomodoroMode; label: string }[]>(() => [
@@ -137,20 +140,30 @@ onMounted(() => {
     <Card
       class="bg-card/60 border-border/40 relative w-full rounded-3xl shadow-xl backdrop-blur-xl"
     >
-      <div
-        class="bg-muted/60 ring-border/40 text-muted-foreground absolute top-4 left-4 flex items-center gap-2 rounded-full px-3 py-1.5 text-xs ring-1 backdrop-blur-md select-none"
-        :title="t('pomodoro.todayFocusedHint')"
-      >
-        <div class="flex items-start gap-2">
+      <div class="absolute top-4 left-4 flex items-center gap-2">
+        <div
+          class="bg-muted/60 ring-border/40 text-muted-foreground flex items-center gap-2 rounded-full px-3 py-1.5 text-xs ring-1 backdrop-blur-md select-none"
+          :title="t('pomodoro.todayFocusedHint')"
+        >
           <Clock class="size-3.5" />
-          <div class="flex flex-row gap-2">
+          <div class="flex flex-row gap-1.5">
             {{ t('pomodoro.todayFocused') }}:
             <span class="text-foreground tabular-num font-semibold">{{
               pomodoroStore.todayFocusLabel
             }}</span>
           </div>
         </div>
+        <button
+          type="button"
+          class="bg-muted/60 ring-border/40 text-muted-foreground hover:text-foreground hover:bg-muted flex items-center rounded-full p-2 ring-1 backdrop-blur-md transition-colors"
+          :aria-label="t('pomodoro.stats.title')"
+          :title="t('pomodoro.stats.title')"
+          @click="isStatsDialogOpen = true"
+        >
+          <ChartColumn class="size-3.5" />
+        </button>
       </div>
+
       <Button
         size="icon"
         variant="ghost"
@@ -263,6 +276,7 @@ onMounted(() => {
       @confirm="handleModeChangeConfirm"
     />
 
-    <PomodoroSettingsDialog v-model="isSettingsDialogOpen" />
+    <PomodoroSettingsDialog v-model="isSettingsDialogOpen" @open-stats="isStatsDialogOpen = true" />
+    <PomodoroStatsDialog v-model="isStatsDialogOpen" />
   </div>
 </template>

@@ -137,7 +137,26 @@
       "focusMinutes": "Fokus (Minuten)",
       "shortBreakMinutes": "Kurze Pause (Minuten)",
       "longBreakMinutes": "Lange Pause (Minuten)",
-      "save": "Speichern"
+      "soundEnabled": "Ton bei Ende einer Session",
+      "previewSound": "Vorschau abspielen",
+      "save": "Speichern",
+      "viewStats": "Statistiken anzeigen"
+    },
+    "stats": {
+      "title": "Pomodoro-Statistiken",
+      "description": "Dein Fokus-Verlauf im Überblick.",
+      "range": {
+        "7": "7 Tage",
+        "14": "14 Tage",
+        "30": "30 Tage"
+      },
+      "totalFocus": "Fokuszeit gesamt",
+      "totalSessions": "Abgeschlossene Sessions",
+      "averagePerDay": "Ø pro Tag",
+      "tableDate": "Datum",
+      "tableFocusTime": "Fokuszeit",
+      "tableSessions": "Sessions",
+      "empty": "Für diesen Zeitraum liegen noch keine Daten vor."
     }
   },
   "settings": {

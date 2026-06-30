@@ -1,8 +1,19 @@
 import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, onScopeDispose, ref } from 'vue'
+import { playCompletionChime } from '@/utils/sound'
 
 export type PomodoroMode = 'focus' | 'shortBreak' | 'longBreak'
+
+export interface PomodoroDayStats {
+  focusSeconds: number
+  sessionsCompleted: number
+}
+
+export interface PomodoroHistoryEntry {
+  date: string
+  stats: PomodoroDayStats
+}
 
 const DEFAULT_DURATIONS: Record<PomodoroMode, number> = {
   focus: 25 * 60,
@@ -11,17 +22,22 @@ const DEFAULT_DURATIONS: Record<PomodoroMode, number> = {
 }
 
 const SESSIONS_UNTIL_LONG_BREAK = 4
+const DEFAULT_SOUND_VOLUME = 0.5
 const DURATIONS_STORAGE_KEY = 'mellow:pomodoro:durations'
 const TODAY_FOCUS_SECONDS_KEY = 'mellow:pomodoro:todayFocusSeconds'
 const TODAY_DATE_KEY = 'mellow:pomodoro:todayDate'
+const HISTORY_STORAGE_KEY = 'mellow:pomodoro:history'
+const SOUND_ENABLED_KEY = 'mellow:pomodoro:soundEnabled'
+const SOUND_VOLUME_KEY = 'mellow:pomodoro:soundVolume'
 
-const getTodayKey = () => {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = (now.getMonth() + 1).toString().padStart(2, '0')
-  const day = now.getDate().toString().padStart(2, '0')
+const getDateKey = (date: Date) => {
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
   return `${year}-${month}-${day}`
 }
+
+const getTodayKey = () => getDateKey(new Date())
 
 export const usePomodoroStore = defineStore('pomodoro', () => {
   const durations = useLocalStorage<Record<PomodoroMode, number>>(
@@ -31,6 +47,9 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
   )
   const todayFocusSeconds = useLocalStorage<number>(TODAY_FOCUS_SECONDS_KEY, 0)
   const todayDate = useLocalStorage<string>(TODAY_DATE_KEY, '')
+  const history = useLocalStorage<Record<string, PomodoroDayStats>>(HISTORY_STORAGE_KEY, {})
+  const isSoundEnabled = useLocalStorage<boolean>(SOUND_ENABLED_KEY, true)
+  const soundVolume = useLocalStorage<number>(SOUND_VOLUME_KEY, DEFAULT_SOUND_VOLUME)
 
   const mode = ref<PomodoroMode>('focus')
   const remainingSeconds = ref(durations.value.focus)
@@ -39,11 +58,17 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
 
   let intervalId: number | undefined
 
+  const getDayStats = (dateKey: string): PomodoroDayStats =>
+    history.value[dateKey] ?? { focusSeconds: 0, sessionsCompleted: 0 }
+
   const ensureToday = () => {
     const today = getTodayKey()
     if (todayDate.value !== today) {
       todayDate.value = today
       todayFocusSeconds.value = 0
+    }
+    if (!history.value[today]) {
+      history.value[today] = { focusSeconds: 0, sessionsCompleted: 0 }
     }
   }
 
@@ -83,6 +108,8 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
   const advanceMode = () => {
     if (mode.value === 'focus') {
       completedFocusSessions.value += 1
+      ensureToday()
+      history.value[getTodayKey()].sessionsCompleted += 1
       const nextMode: PomodoroMode =
         completedFocusSessions.value % SESSIONS_UNTIL_LONG_BREAK === 0 ? 'longBreak' : 'shortBreak'
       mode.value = nextMode
@@ -96,6 +123,9 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
   const handleCompletion = () => {
     stopTicker()
     isRunning.value = false
+    if (isSoundEnabled.value) {
+      playCompletionChime(soundVolume.value)
+    }
     advanceMode()
   }
 
@@ -103,6 +133,7 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     if (mode.value === 'focus') {
       ensureToday()
       todayFocusSeconds.value += 1
+      history.value[getTodayKey()].focusSeconds += 1
     }
 
     if (remainingSeconds.value <= 1) {
@@ -185,6 +216,26 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     }
   }
 
+  const updateSound = (payload: { isEnabled: boolean; volume: number }) => {
+    isSoundEnabled.value = payload.isEnabled
+    soundVolume.value = Math.min(1, Math.max(0, payload.volume))
+  }
+
+  const previewSound = (volume = soundVolume.value) => {
+    playCompletionChime(volume)
+  }
+
+  const getHistoryRange = (days: number): PomodoroHistoryEntry[] => {
+    const entries: PomodoroHistoryEntry[] = []
+    for (let offset = days - 1; offset >= 0; offset -= 1) {
+      const date = new Date()
+      date.setDate(date.getDate() - offset)
+      const dateKey = getDateKey(date)
+      entries.push({ date: dateKey, stats: getDayStats(dateKey) })
+    }
+    return entries
+  }
+
   onScopeDispose(() => {
     stopTicker()
   })
@@ -196,6 +247,9 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     completedFocusSessions,
     durations,
     todayFocusSeconds,
+    history,
+    isSoundEnabled,
+    soundVolume,
     totalSeconds,
     progress,
     minutesLabel,
@@ -209,6 +263,10 @@ export const usePomodoroStore = defineStore('pomodoro', () => {
     setMode,
     skipForward,
     updateDurations,
-    ensureToday
+    updateSound,
+    previewSound,
+    ensureToday,
+    getDayStats,
+    getHistoryRange
   }
 })
