@@ -139,8 +139,7 @@
       "longBreakMinutes": "Long break (minutes)",
       "soundEnabled": "Sound when a session ends",
       "previewSound": "Play preview",
-      "save": "Save",
-      "viewStats": "View statistics"
+      "save": "Save"
     },
     "stats": {
       "title": "Pomodoro statistics",

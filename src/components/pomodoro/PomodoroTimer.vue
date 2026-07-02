@@ -276,7 +276,7 @@ onMounted(() => {
       @confirm="handleModeChangeConfirm"
     />
 
-    <PomodoroSettingsDialog v-model="isSettingsDialogOpen" @open-stats="isStatsDialogOpen = true" />
+    <PomodoroSettingsDialog v-model="isSettingsDialogOpen" />
     <PomodoroStatsDialog v-model="isStatsDialogOpen" />
   </div>
 </template>

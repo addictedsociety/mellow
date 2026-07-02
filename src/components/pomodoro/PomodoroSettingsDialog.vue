@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChartColumn, Play, Settings, Volume2, VolumeX } from 'lucide-vue-next'
+import { Play, Settings, Volume2, VolumeX } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Button } from '@/components/ui/button'
@@ -24,10 +24,6 @@ import { usePomodoroStore, type PomodoroMode } from '@/stores/pomodoro'
 
 const MIN_MINUTES = 1
 const MAX_MINUTES = 180
-
-const emit = defineEmits<{
-  openStats: []
-}>()
 
 const isOpen = defineModel<boolean>({ default: false })
 
@@ -81,11 +77,6 @@ const handleSave = () => {
 
 const handleCancel = () => {
   isOpen.value = false
-}
-
-const handleViewStats = () => {
-  isOpen.value = false
-  emit('openStats')
 }
 
 watch(isOpen, (next) => {
@@ -194,16 +185,6 @@ watch(isOpen, (next) => {
             </Button>
           </div>
         </div>
-
-        <Button
-          type="button"
-          variant="ghost"
-          class="text-muted-foreground hover:text-foreground justify-start px-2"
-          @click="handleViewStats"
-        >
-          <ChartColumn class="size-4" />
-          {{ t('pomodoro.settings.viewStats') }}
-        </Button>
 
         <DialogFooter>
           <Button type="button" variant="outline" @click="handleCancel">
